@@ -1,5 +1,7 @@
 from django.db import models
 
+from    Apps.autenticacion.models import Usuario
+
 class TipoNegocio(models.Model):
     nombreTipoNegocio = models.CharField(max_length=100)
     descripcion = models.TextField()
@@ -18,3 +20,11 @@ class TblNegocio(models.Model):
     correo = models.CharField(max_length=255)
     fechaCreacion = models.DateField()
     tipoNegocio = models.ForeignKey(TipoNegocio, on_delete=models.SET_NULL, null=True)
+
+
+class UsuarioNegocio(models.Model):
+    usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE)
+    negocio = models.ForeignKey(TblNegocio, on_delete=models.CASCADE)
+
+    class Meta:
+        db_table = 'tbl_negocio_has_Usuario'

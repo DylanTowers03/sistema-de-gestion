@@ -44,6 +44,10 @@ INSTALLED_APPS = [
     'Apps.autenticacion.apps.AutenticacionConfig',
     'Apps.clientes.apps.ClientesConfig',
     'Apps.empleados.apps.EmpleadosConfig',
+    'Apps.caja.apps.CajaConfig',
+    'Apps.movimientos.apps.MovimientosConfig',
+    'Apps.gastos.apps.GastosConfig',
+    'rest_framework',
     
 ]
 
