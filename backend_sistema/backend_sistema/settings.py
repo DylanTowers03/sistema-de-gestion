@@ -89,12 +89,14 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'backend_test',
         'USER': 'root',
-        'PASSWORD': 'Mysql123*',
-        'HOST': 'localhost',
-        'PORT': '3306'
+        'PASSWORD': '159753864l',  # o tu contraseña real
+        'HOST': '127.0.0.1',
+        'PORT': '3306',  # o el puerto si cambiaste (ej. 3307)
+        'OPTIONS': {
+            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+        }
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
