@@ -3,7 +3,8 @@ from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from .views import (
     UsuarioViewSet, RolViewSet, RecursoViewSet,
-    UsuarioHasRolViewSet, RecursoHasViewSet
+    UsuarioHasRolViewSet, RecursoHasViewSet, inicio,
+    registro, login
 )
 
 router = DefaultRouter()
@@ -15,4 +16,7 @@ router.register(r'rol-recurso', RecursoHasViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),
+    path('inicio/', inicio, name='inicio'),
+    path('registro/', registro, name='registro'),
+    path('login/', login, name='login'),
 ]

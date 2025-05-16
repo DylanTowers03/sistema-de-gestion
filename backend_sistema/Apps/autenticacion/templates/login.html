@@ -1,0 +1,8 @@
+<h2>Iniciar sesión</h2>
+<form method="post">
+  {% csrf_token %}
+  <label>Correo:</label><input type="email" name="correo"><br>
+  <label>Contraseña:</label><input type="password" name="password"><br>
+  <button type="submit">Entrar</button>
+</form>
+{% if error %}<p style="color:red;">{{ error }}</p>{% endif %}
