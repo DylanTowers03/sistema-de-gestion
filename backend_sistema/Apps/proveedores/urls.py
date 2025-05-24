@@ -1,6 +1,13 @@
-from django.urls import path
-from .views import home
+from django.urls import path, include
+from .views import *
+from rest_framework.routers import DefaultRouter
+
+
+router = DefaultRouter()
+router.register(r'proveedores', ProveedorViewSet)
+router.register(r'proveedor-productos', ProveedorProductoViewSet)
+
 
 urlpatterns = [
-    path('', home, name='home'),
+    path('', include(router.urls)),
 ]

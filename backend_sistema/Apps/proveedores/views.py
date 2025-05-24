@@ -1,9 +1,17 @@
 from django.shortcuts import render
 from django.http import HttpResponse
-
+from rest_framework import viewsets
+from .models import Proveedor, ProveedorProducto
+from .serializers import ProveedorSerializer, ProveedorProductoSerializer
 
 # Create your views here.
 
 
-def home(request):
-    return HttpResponse("Bienvenidos, Uniguajira!- Aplicación proveedores")
+class ProveedorViewSet(viewsets.ModelViewSet):
+    queryset = Proveedor.objects.all()
+    serializer_class = ProveedorSerializer
+
+class ProveedorProductoViewSet(viewsets.ModelViewSet):
+    queryset = ProveedorProducto.objects.all()
+    serializer_class = ProveedorProductoSerializer
+
