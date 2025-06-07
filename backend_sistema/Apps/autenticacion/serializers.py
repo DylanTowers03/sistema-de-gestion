@@ -2,6 +2,20 @@ import bcrypt
 from rest_framework import serializers
 from .models import Usuario, Rol, Recurso, UsuarioHasRol, RecursoHasRol
 
+class RegisterSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(write_only=True)
+
+    class Meta:
+        model = Usuario
+        fields = ['nombre', 'correo', 'password']
+
+    def create(self, validated_data):
+        return Usuario.objects.create_user(
+            correo=validated_data['correo'],
+            nombre=validated_data['nombre'],
+            password=validated_data['password']
+        )
+
 
 class UsuarioSerializer(serializers.ModelSerializer):
     class Meta:

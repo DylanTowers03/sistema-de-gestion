@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 from pathlib import Path
-
+from datetime import timedelta
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -31,6 +31,8 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'rest_framework',
+    'rest_framework_simplejwt',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -47,9 +49,24 @@ INSTALLED_APPS = [
     'Apps.caja.apps.CajaConfig',
     'Apps.movimientos.apps.MovimientosConfig',
     'Apps.gastos.apps.GastosConfig',
-    'rest_framework',
     
 ]
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',  
+    ),
+}
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=10),
+    'REFRESH_TOKEN_LIFETIME': timedelta(minutes=20),
+}
+
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -86,15 +103,14 @@ WSGI_APPLICATION = 'backend_sistema.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'backend_test',
-        'USER': 'root',
-        'PASSWORD': '159753864l',  # o tu contraseña real
-        'HOST': '127.0.0.1',
-        'PORT': '3306',  # o el puerto si cambiaste (ej. 3307)
-        'OPTIONS': {
-            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
-        }
+        #'ENGINE': 'django.db.backends.mysql',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'joenis_db',
+        'USER': 'postgres',
+        'PASSWORD': 'admin1234',  # o tu contraseña real
+        'HOST': 'localhost',
+        'PORT': '5432',  # o el puerto si cambiaste (ej. 3307)
+        #'OPTIONS': {'it_command': "SET sql_mode='STRICT_TRANS_TABLES'",}
     }
 }
 
@@ -138,3 +154,5 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+AUTH_USER_MODEL = 'autenticacion.Usuario'
