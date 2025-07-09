@@ -1,6 +1,21 @@
 import bcrypt
 from rest_framework import serializers
 from .models import Usuario, Rol, Recurso, UsuarioHasRol, RecursoHasRol
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+
+
+class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
+   @classmethod
+   def get_token(cls, user):
+        token = super().get_token(user)
+
+        # Añadir datos personalizados al payload
+        token['nombre'] = user.nombre
+        token["id"] = user.id  # Assuming 'id' is the primary key of the user
+        token['correo'] = user.correo
+        token['roles'] = [rol.nombreRol for rol in user.roles.all()]
+        return token
+
 
 class RegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)

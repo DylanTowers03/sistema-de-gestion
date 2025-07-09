@@ -86,7 +86,7 @@ export default function Login() {
         setProgress(100); // terminar progreso
         setTimeout(() => {
           setProgress(0);
-          router.push("/dashboard");
+          router.push("/dashboard/home");
         }, 1000);
       } else {
         throw new Error("Invalid credentials");
@@ -142,7 +142,7 @@ export default function Login() {
                     control={form.control}
                     name="password"
                     render={({ field }) => (
-                      <FormItem className="grid gap-2">
+                      <FormItem className="grid gap-2 w-full">
                         <div className="flex justify-between items-center">
                           <FormLabel htmlFor="password">Password</FormLabel>
                           <Link
@@ -160,7 +160,9 @@ export default function Login() {
                             {...field}
                           />
                         </FormControl>
-                        <FormMessage />
+                        <div className="max-h-[1.25rem] max-w-[270px] mb-3">
+                          <FormMessage />
+                        </div>
                       </FormItem>
                     )}
                   />

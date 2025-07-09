@@ -15,8 +15,14 @@ from .serializers import (
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from .serializers import RegisterSerializer
+from .serializers import RegisterSerializer,CustomTokenObtainPairSerializer
 from rest_framework.permissions import AllowAny
+from rest_framework_simplejwt.views import TokenObtainPairView
+
+class CustomTokenObtainPairView(TokenObtainPairView):
+    serializer_class = CustomTokenObtainPairSerializer
+
+
 class RegisterView(APIView):
     permission_classes = [AllowAny]
     def post(self, request):
@@ -29,10 +35,11 @@ class RegisterView(APIView):
 
 class UsuarioViewSet(APIView):
     permission_classes = [IsAuthenticated, IsInRole]
-    required_roles = ['Admin', 'Moderador']
+
+    roles = Rol.objects.filter(nombreRol__in=['Admin', 'Moderador'])
+    required_roles = [role.nombreRol for role in roles]
 
     def get(self, request):
-
         return Response({"mensaje": "Solo usuarios con rol Admin o Moderador pueden ver esto"})
 
 class RolViewSet(viewsets.ModelViewSet):

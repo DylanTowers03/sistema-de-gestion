@@ -8,10 +8,13 @@ from .views import (
 )
 
 router = DefaultRouter()
-router.register(r'', ProductoViewSet)
-router.register(r'tipo-producto', TipoProductoViewSet)
-router.register(r'categoria-producto', CategoriaProductoViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),
+    path('api/producto/', ProductoViewSet.as_view(), name='producto-list-create'),
+    path('api/producto/<int:pk>/', ProductoViewSet.as_view(), name='producto-list-detail'),
+    path('api/tipo-producto/', TipoProductoViewSet.as_view(), name='tipo-producto-list-create'),
+    path('api/tipo-producto/<int:pk>/', TipoProductoViewSet.as_view(), name='tipo-producto-detail'),
+    path('api/categoria-producto/', CategoriaProductoViewSet.as_view(), name='categoria-producto-list-create'),
+    path('api/categoria-producto/<int:pk>/', CategoriaProductoViewSet.as_view(), name='categoria-producto-detail'),
 ]
