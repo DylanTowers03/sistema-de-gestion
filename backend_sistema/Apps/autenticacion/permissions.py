@@ -4,7 +4,6 @@ class IsInRole(BasePermission):
 
     def has_permission(self, request, view):
         required_roles = getattr(view, 'required_roles', [])
-        print(request.user.roles)
         if not request.user or not request.user.is_authenticated:
             return False
         user_roles = request.user.roles.values_list('nombreRol', flat=True)

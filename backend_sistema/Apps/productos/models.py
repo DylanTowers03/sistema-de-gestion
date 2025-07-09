@@ -9,7 +9,7 @@ class CategoriaProducto(models.Model):
 
 class TipoProducto(models.Model):
     nombreTipoProducto = models.CharField(max_length=100)
-
+ 
     def __str__(self):
         return self.nombreTipoProducto
 
