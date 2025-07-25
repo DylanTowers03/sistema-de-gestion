@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { motion } from "framer-motion";
 import { Separator } from "@radix-ui/react-dropdown-menu";
 import { stats, productActions } from "@/lib/constants";
-import CardsActions from "@/app/components/cards-actions";
+import CardsActions from "@/app/components/cards-products-actions";
 export function DashboardProducts() {
   return (
     <>
@@ -32,7 +32,7 @@ export function DashboardProducts() {
 
         {/* Stats Cards */}
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-          {stats.map((stat, index) => (
+          {stats.map((stat) => (
             <Card
               key={stat.title}
               className="hover:shadow-md transition-shadow duration-300"

@@ -24,6 +24,13 @@ export interface Column {
   sortable?: boolean;
   width?: string;
 }
+export interface ColumnGeneric<T> {
+  key: string;
+  label: string;
+  render?: (item: T) => React.ReactNode;
+  sortable?: boolean;
+  width?: string;
+}
 
 interface DataTableProps {
   data: Product[];
@@ -34,7 +41,7 @@ interface DataTableProps {
   emptyDescription?: string;
 }
 
-export function DataTable({
+export function DataTableProduct({
   data,
   columns,
   selectedItems = [],

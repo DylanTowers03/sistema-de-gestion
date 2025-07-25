@@ -1,5 +1,5 @@
 "use client";
-import React, { use, useEffect } from "react";
+import React, { useEffect } from "react";
 import { PageHeader } from "@/app/components/page-header";
 import { DataSearchFilter } from "@/app/components/data-search-filter";
 import { useQuery } from "@tanstack/react-query";
@@ -9,7 +9,10 @@ import { AxiosError } from "axios";
 import toast from "react-hot-toast";
 import { signOut } from "next-auth/react";
 import { Categorias, filterOptions, Product, Tipos } from "@/types/types";
-import { DataTable, type Column } from "@/app/components/data-table";
+import {
+  DataTableProduct,
+  type Column,
+} from "@/app/components/data-table-product";
 import { Badge } from "@/components/ui/badge";
 import {
   DollarSign,
@@ -240,7 +243,7 @@ export default function ProductosPage() {
           </motion.div>
         )}
 
-        <DataTable
+        <DataTableProduct
           data={filteredProducts}
           columns={columns}
           selectedItems={selectedItems}

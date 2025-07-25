@@ -1,4 +1,4 @@
-import CardsActions from "./cards-actions";
+import CardsActions from "./cards-products-actions";
 import { categoriasActions } from "../../lib/constants";
 
 export default function DashboardCategorias() {

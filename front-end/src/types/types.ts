@@ -1,7 +1,6 @@
-
 import { LucideProps } from "lucide-react";
 import { ForwardRefExoticComponent, RefAttributes } from "react";
-import { z } from "zod"
+import { z } from "zod";
 
 type ProductAction = {
   title: string;
@@ -9,19 +8,33 @@ type ProductAction = {
   actions: Action[];
 };
 
+type AnonymousAction = {
+  title: string;
+  description: string;
+  actions: Action[];
+};
+
 type User = {
-    id: number;
-    nombre: string;
-    correo: string;
-    roles : string[];
-    exp: number;
-}
+  id: number;
+  nombre: string;
+  correo: string;
+  roles: string[];
+  exp: number;
+};
 
 export const productFormSchema = z
   .object({
-    productName: z.string().min(1, "El nombre del producto es requerido").max(100, "Máximo 100 caracteres"),
-    description: z.string().min(1, "La descripción es requerida").max(500, "Máximo 500 caracteres"),
-    currentStock: z.number().min(0, "El stock actual debe ser mayor o igual a 0"),
+    productName: z
+      .string()
+      .min(1, "El nombre del producto es requerido")
+      .max(100, "Máximo 100 caracteres"),
+    description: z
+      .string()
+      .min(1, "La descripción es requerida")
+      .max(500, "Máximo 500 caracteres"),
+    currentStock: z
+      .number()
+      .min(0, "El stock actual debe ser mayor o igual a 0"),
     minStock: z.number().min(0, "El stock mínimo debe ser mayor o igual a 0"),
     maxStock: z.number().min(1, "El stock máximo debe ser mayor a 0"),
     unitOfMeasure: z.string().min(1, "La unidad de medida es requerida"),
@@ -36,79 +49,144 @@ export const productFormSchema = z
   .refine((data) => data.currentStock <= data.maxStock, {
     message: "El stock actual no puede ser mayor al stock máximo",
     path: ["currentStock"],
-  })
+  });
 
-type ProductFormData = z.infer<typeof productFormSchema>
+type ProductFormData = z.infer<typeof productFormSchema>;
 
+/*
+nombreCliente = models.CharField(max_length=100)
+    apellidoCliente = models.CharField(max_length=100)
+    correo = models.CharField(max_length=100)
+    telefono = models.CharField(max_length=100)
+    direccion = models.TextField()
 
-export const CategoriasFormSchema = z
-  .object({
-    nombreCategoria: z.string().min(1, "El nombre es requerido").max(100, "Máximo 100 caracteres"),
-  })
+*/
 
-type CategoriasFormData = z.infer<typeof 
-CategoriasFormSchema>
+export const clientesFormSchema = z.object({
+  nombreCliente: z
+    .string()
+    .min(1, "El nombre es requerido")
+    .max(100, "Máximo 100 caracteres"),
+  apellidoCliente: z
+    .string()
+    .min(1, "El apellido es requerido")
+    .max(100, "Máximo 100 caracteres"),
+  correo: z
+    .string()
+    .email("Correo electrónico inválido")
+    .max(100, "Máximo 100 caracteres"),
+  telefono: z
+    .string()
+    .min(1, "El teléfono es requerido")
+    .max(100, "Máximo 100 caracteres"),
+  direccion: z
+    .string()
+    .min(1, "La dirección es requerida")
+    .max(500, "Máximo 500 caracteres"),
+});
+
+type ClientFormData = z.infer<typeof clientesFormSchema>;
+
+export const CategoriasFormSchema = z.object({
+  nombreCategoria: z
+    .string()
+    .min(1, "El nombre es requerido")
+    .max(100, "Máximo 100 caracteres"),
+});
+
+type CategoriasFormData = z.infer<typeof CategoriasFormSchema>;
 
 type CategoriasFormDataUpdate = CategoriasFormData & {
   id: string;
-}
+};
 
-export const tiposFormSchema = z
-  .object({
-    nombreTipoProducto: z.string().min(1, "El nombre es requerido").max(100, "Máximo 100 caracteres"),
-  })
+export const tiposFormSchema = z.object({
+  nombreTipoProducto: z
+    .string()
+    .min(1, "El nombre es requerido")
+    .max(100, "Máximo 100 caracteres"),
+});
 
-type TiposFormData = z.infer<typeof tiposFormSchema>
+type TiposFormData = z.infer<typeof tiposFormSchema>;
 
 type TiposFormDataUpdate = TiposFormData & {
   id: string;
-}
+};
 
 type ProductFormDataUpdate = ProductFormData & {
   id: string;
-}
+};
 
 type Action = {
-    title: string;
-    description: string;
-    icon: ForwardRefExoticComponent<Omit<LucideProps, "ref"> & RefAttributes<SVGSVGElement>>;
-    permissions: string;
-    permissionIcon: ForwardRefExoticComponent<Omit<LucideProps, "ref"> & RefAttributes<SVGSVGElement>>;
-    color: string;
-    action: string;
-}
+  title: string;
+  description: string;
+  icon: ForwardRefExoticComponent<
+    Omit<LucideProps, "ref"> & RefAttributes<SVGSVGElement>
+  >;
+  permissions: string;
+  permissionIcon: ForwardRefExoticComponent<
+    Omit<LucideProps, "ref"> & RefAttributes<SVGSVGElement>
+  >;
+  color: string;
+  action: string;
+};
+
+type Client = {
+  id: string;
+  nombreCliente: string;
+  apellidoCliente: string;
+  correo: string;
+  telefono: string;
+  direccion: string;
+};
 
 type Product = {
-  id: string
-  nombreProducto: string
-  descripcion: string
-  stockActual: number
-  stockMin: number
-  stockMax: number
-  unidadMedida: string
-  precioVenta: number
-  categoria: string
-  tipo: string
-  
-}
+  id: string;
+  nombreProducto: string;
+  descripcion: string;
+  stockActual: number;
+  stockMin: number;
+  stockMax: number;
+  unidadMedida: string;
+  precioVenta: number;
+  categoria: string;
+  tipo: string;
+};
 
 type Tipos = {
   id: string;
   nombreTipoProducto: string;
-}
+};
 type Categorias = {
   id: string;
   nombreCategoria: string;
-}
-type DataItem = Product | Categorias | Tipos
+};
+type DataItem = Product | Categorias | Tipos;
 
-
-type filterOptions= {
-    key: string;
+type filterOptions = {
+  key: string;
+  label: string;
+  options: {
+    value: string;
     label: string;
-    options: {
-        value: string;
-        label: string;
-    }[];
-}
-export type { DataItem,filterOptions , CategoriasFormDataUpdate, CategoriasFormData,  TiposFormDataUpdate,ProductAction, TiposFormData,Action,Product, ProductFormData, User , ProductFormDataUpdate, Tipos, Categorias };
+  }[];
+};
+export type {
+  DataItem,
+  filterOptions,
+  CategoriasFormDataUpdate,
+  CategoriasFormData,
+  TiposFormDataUpdate,
+  ProductAction,
+  TiposFormData,
+  Action,
+  Product,
+  ProductFormData,
+  User,
+  ProductFormDataUpdate,
+  Tipos,
+  Categorias,
+  AnonymousAction,
+  ClientFormData,
+  Client,
+};

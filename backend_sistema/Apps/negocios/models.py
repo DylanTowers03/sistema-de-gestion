@@ -1,6 +1,6 @@
 from django.db import models
 
-from    Apps.autenticacion.models import Usuario
+from Apps.autenticacion.models import Usuario
 
 class TipoNegocio(models.Model):
     nombreTipoNegocio = models.CharField(max_length=100)

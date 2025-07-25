@@ -33,15 +33,6 @@ class RegisterView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class UsuarioViewSet(APIView):
-    permission_classes = [IsAuthenticated, IsInRole]
-
-    roles = Rol.objects.filter(nombreRol__in=['Admin', 'Moderador'])
-    required_roles = [role.nombreRol for role in roles]
-
-    def get(self, request):
-        return Response({"mensaje": "Solo usuarios con rol Admin o Moderador pueden ver esto"})
-
 class RolViewSet(viewsets.ModelViewSet):
     queryset = Rol.objects.all()
     serializer_class = RolesSerializer

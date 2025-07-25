@@ -18,21 +18,21 @@ import { Separator } from "@/components/ui/separator";
 import {
   Search,
   Trash2,
-  AlertTriangle,
   Package,
   X,
   Loader2,
   DollarSign,
   Hash,
+  User,
 } from "lucide-react";
-import type { Product, Tipos, Categorias } from "@/types/types";
+import type { Product, Tipos, Categorias, Client } from "@/types/types";
 import { useQuery } from "@tanstack/react-query";
-import { getProducts, getCategorias, getTipos } from "@/lib/api";
+import { getProducts, getCategorias, getTipos, getClients } from "@/lib/api";
 import { useUser } from "./UserContext";
 interface DeleteModalProps {
   isOpen: boolean;
   onClose: () => void;
-  section: "productos" | "tipos" | "categorias";
+  section: "productos" | "tipos" | "categorias" | "clientes";
   onDelete: (id: string) => Promise<void>;
 }
 
@@ -44,13 +44,17 @@ export function DeleteModal({
 }: DeleteModalProps) {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedItem, setSelectedItem] = useState<
-    Product | Tipos | Categorias | null
+    Product | Tipos | Categorias | Client | null
   >(null);
   const [isDeleting, setIsDeleting] = useState(false);
-  const [data, setData] = useState<Product[] | Tipos[] | Categorias[]>([]);
+  const [data, setData] = useState<
+    Product[] | Tipos[] | Categorias[] | Client[]
+  >([]);
   const { session } = useUser();
 
-  const { data: queryData } = useQuery<Product[] | Tipos[] | Categorias[]>({
+  const { data: queryData } = useQuery<
+    Product[] | Tipos[] | Categorias[] | Client[]
+  >({
     queryKey: [section],
     queryFn: () => {
       if (section === "productos") {
@@ -62,26 +66,43 @@ export function DeleteModal({
       if (section === "categorias") {
         return getCategorias(session?.accessToken || "");
       }
+      if (section === "clientes") {
+        return getClients(session?.accessToken || "");
+      }
       return [];
     },
   });
 
   useEffect(() => {
     if (queryData) {
+      console.log(queryData);
+
       setData(queryData);
     }
   }, [queryData]);
 
-  function isProductArray(data: any[]): data is Product[] {
+  function isProductArray(
+    data: Product[] | Tipos[] | Categorias[] | Client[]
+  ): data is Product[] {
     return data.length > 0 && "nombreProducto" in data[0];
   }
 
-  function isTipoArray(data: any[]): data is Tipos[] {
+  function isTipoArray(
+    data: Tipos[] | Categorias[] | Product[] | Client[]
+  ): data is Tipos[] {
     return data.length > 0 && "nombreTipoProducto" in data[0];
   }
 
-  function isCategoriaArray(data: any[]): data is Categorias[] {
+  function isCategoriaArray(
+    data: Categorias[] | Product[] | Tipos[] | Client[]
+  ): data is Categorias[] {
     return data.length > 0 && "nombreCategoria" in data[0];
+  }
+
+  function isClientArray(
+    data: Client[] | Product[] | Tipos[] | Categorias[]
+  ): data is Client[] {
+    return data.length > 0 && "nombreCliente" in data[0];
   }
 
   const filteredData = useMemo(() => {
@@ -103,6 +124,17 @@ export function DeleteModal({
       return data.filter((item) =>
         item.nombreCategoria.toLowerCase().includes(lowerSearch)
       );
+    }
+
+    if (isClientArray(data)) {
+      console.log("isClientArray", data);
+
+      return data.filter((item) => {
+        return (
+          item.nombreCliente.toLowerCase().includes(lowerSearch) ||
+          item.apellidoCliente.toString().includes(lowerSearch)
+        );
+      });
     }
 
     return [];
@@ -177,7 +209,7 @@ export function DeleteModal({
               )}
             </div>
 
-            <ScrollArea className="h-[300px] w-full border rounded-md">
+            <ScrollArea className="h-[152px] w-full border rounded-md">
               <div className="p-4 space-y-2">
                 <AnimatePresence>
                   {isProductArray(filteredData) &&
@@ -308,6 +340,54 @@ export function DeleteModal({
                                   <Package className="h-4 w-4 text-muted-foreground" />
                                   <h4 className="font-medium text-sm">
                                     {el.nombreCategoria}
+                                  </h4>
+                                </div>
+
+                                <div className="flex items-center space-x-4 text-xs text-muted-foreground">
+                                  <div className="flex items-center space-x-1">
+                                    <Hash className="h-3 w-3" />
+                                    <span>ID: {el.id}</span>
+                                  </div>
+                                </div>
+                              </div>
+                              {selectedItem?.id === el.id && (
+                                <motion.div
+                                  initial={{ scale: 0 }}
+                                  animate={{ scale: 1 }}
+                                  className="ml-2"
+                                >
+                                  <div className="w-2 h-2 bg-red-500 rounded-full"></div>
+                                </motion.div>
+                              )}
+                            </div>
+                          </CardContent>
+                        </Card>
+                      </motion.div>
+                    ))}
+                  {isClientArray(filteredData) &&
+                    filteredData.map((el) => (
+                      <motion.div
+                        key={el.id}
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -10 }}
+                        transition={{ duration: 0.2 }}
+                      >
+                        <Card
+                          className={`cursor-pointer transition-all duration-200 hover:shadow-md ${
+                            selectedItem?.id === el.id
+                              ? "ring-2 ring-red-500 bg-red-50 dark:bg-red-900/10"
+                              : "hover:bg-muted/50"
+                          }`}
+                          onClick={() => setSelectedItem(el)}
+                        >
+                          <CardContent className="p-4">
+                            <div className="flex items-center justify-between">
+                              <div className="flex-1">
+                                <div className="flex items-center space-x-2 mb-1">
+                                  <User className="h-4 w-4 text-muted-foreground" />
+                                  <h4 className="font-medium text-sm">
+                                    {el.nombreCliente} {el.apellidoCliente}
                                   </h4>
                                 </div>
 
