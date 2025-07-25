@@ -80,6 +80,21 @@ export function FormModal({
   const [types, setTypes] = useState<Tipos[]>([]);
   const { session } = useUser();
 
+  const form = useForm<ProductFormData>({
+    resolver: zodResolver(productFormSchema),
+    defaultValues: {
+      productName: "",
+      description: "",
+      currentStock: 0,
+      minStock: 0,
+      maxStock: 100,
+      unitOfMeasure: "",
+      salePrice: 0,
+      category: "",
+      type: "",
+    },
+  });
+
   const { data, error } = useQuery({
     queryKey: ["productos"],
     queryFn: () => getProducts(session?.accessToken || ""),
@@ -135,22 +150,7 @@ export function FormModal({
       category: selectedProduct?.categoria || "",
       type: selectedProduct?.tipo || "",
     });
-  }, [selectedProduct]);
-
-  const form = useForm<ProductFormData>({
-    resolver: zodResolver(productFormSchema),
-    defaultValues: {
-      productName: "",
-      description: "",
-      currentStock: 0,
-      minStock: 0,
-      maxStock: 100,
-      unitOfMeasure: "",
-      salePrice: 0,
-      category: "",
-      type: "",
-    },
-  });
+  }, [selectedProduct, form]);
 
   const filteredProducts = useMemo(() => {
     console.log(products[0]);

@@ -3,11 +3,11 @@
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Badge } from "@/components/ui/badge";
 import { useState } from "react";
 import { useDashboardWindow } from "./DashboardWindowProvider";
 import { sidebarItems } from "@/lib/constants";
 import { ChevronRight } from "lucide-react";
+import { useRouter } from "next/navigation";
 interface DashboardSidebarProps {
   className?: string;
 }
@@ -15,13 +15,20 @@ interface DashboardSidebarProps {
 export function DashboardSidebar({ className }: DashboardSidebarProps) {
   const [activeItem, setActiveItem] = useState<string | null>("Productos");
   const { setWhatIsOpen } = useDashboardWindow();
-
+  const router = useRouter();
   const handleItemClick = (title: string) => {
     setActiveItem(title);
     if (title === "Productos" || title === "Tipos" || title === "Categorias") {
       setWhatIsOpen(
         title.toLowerCase() as "productos" | "tipos" | "categorias"
       );
+
+      router.push("/dashboard/home");
+    }
+
+    if (title === "Clientes") {
+      //navidate to Clientes page
+      router.push("/dashboard/clientes");
     }
   };
 
@@ -43,18 +50,11 @@ export function DashboardSidebar({ className }: DashboardSidebarProps) {
                         activeItem === item.title
                           ? "bg-secondary text-secondary-foreground"
                           : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
-                      }`,
-                      item.disabled && "opacity-50 cursor-not-allowed"
+                      }`
                     )}
-                    disabled={item.disabled}
                   >
                     <item.icon className="mr-3 h-4 w-4" />
                     <span className="flex-1 text-left">{item.title}</span>
-                    {item.badge && (
-                      <Badge variant="outline" className="ml-auto text-xs">
-                        {item.badge}
-                      </Badge>
-                    )}
                     {activeItem === item.title && (
                       <ChevronRight className="ml-auto h-4 w-4" />
                     )}

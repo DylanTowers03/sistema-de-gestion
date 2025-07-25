@@ -389,7 +389,7 @@ export default function CardsActions({
           initial="hidden"
           animate="visible"
         >
-          {actions.map((action, index) => (
+          {actions.map((action) => (
             <motion.div key={action.action} variants={cardVariants}>
               <Card
                 onClick={() => handleActionClick(action.action)}

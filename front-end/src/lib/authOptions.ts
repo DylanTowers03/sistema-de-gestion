@@ -1,84 +1,88 @@
-import axios from "axios"
-import {NextAuthOptions} from "next-auth"
-import CredentialsProvider from "next-auth/providers/credentials"
+import axios from "axios";
+import { NextAuthOptions } from "next-auth";
+import CredentialsProvider from "next-auth/providers/credentials";
 import { jwtDecode } from "jwt-decode";
 import { User } from "@/types/types";
 
-
-
 export const authOptions: NextAuthOptions = {
-  providers:[
+  providers: [
     CredentialsProvider({
-        name: "Credentials",
-        credentials: {
-            correo: { label: "Correo", type: "text", placeholder: "" },
-            password: { label: "Password", type: "password" },
-        },
-        async authorize(credentials){
-            try {
-            const res = await axios.post('http://localhost:8000/autenticacion/api/login/', {
-                correo: credentials?.correo,
-                password: credentials?.password
-            })
-
-            const user = res.data
-            
-            if (user) {
-                const jwt = jwtDecode<User>(user.access)
-                
-                return {
-                    id: jwt.id,
-                    correo: jwt.correo,
-                    nombre: jwt.nombre,
-                    roles: jwt.roles,
-                    accessToken: user.access,
-                    refreshToken: user.refresh,
-                    accessTokenExpires: jwt.exp * 1000,
-                }
+      name: "Credentials",
+      credentials: {
+        correo: { label: "Correo", type: "text", placeholder: "" },
+        password: { label: "Password", type: "password" },
+      },
+      async authorize(credentials) {
+        try {
+          const res = await axios.post(
+            "http://localhost:8000/autenticacion/api/login/",
+            {
+              correo: credentials?.correo,
+              password: credentials?.password,
             }
+          );
 
-            return null
+          const user = res.data;
+          console.log(user);
 
-            } catch (error) {
-                console.log(error);
-                return null
-            }
+          if (user) {
+            const jwt = jwtDecode<User>(user.access);
+            console.log(jwt);
+
+            return {
+              id: jwt.id,
+              correo: jwt.correo,
+              nombre: jwt.nombre,
+              roles: jwt.roles,
+              accessToken: user.access,
+              refreshToken: user.refresh,
+              accessTokenExpires: jwt.exp * 1000,
+            };
+          }
+
+          return null;
+        } catch (error) {
+          console.log(error);
+          return null;
         }
-    })
+      },
+    }),
   ],
-  session:{
-    strategy: "jwt"
+  session: {
+    strategy: "jwt",
   },
-  callbacks:{
+  callbacks: {
     async jwt({ token, user }) {
-        if (user) {
-            token.id = user.id as number
-            token.correo = user.correo
-            token.nombre = user.nombre
-            token.roles = user.roles
-            token.accessToken = user.accessToken
-            token.refreshToken = user.refreshToken
-            token.accessTokenExpires = user.accessTokenExpires
-        }
+      if (user) {
+        token.id = user.id as number;
+        token.correo = user.correo;
+        token.nombre = user.nombre;
+        token.roles = user.roles;
+        token.accessToken = user.accessToken;
+        token.refreshToken = user.refreshToken;
+        token.accessTokenExpires = user.accessTokenExpires;
+      }
 
-        return token
+      return token;
     },
     async session({ session, token }) {
-        if (token) {
-            session.accessToken = token.accessToken
-            session.refreshToken = token.refreshToken
-            session.user.id = token.id as number
-            session.user.correo = token.correo as string
-            session.user.nombre = token.nombre as string
-            session.user.roles = token.roles as string[]
-            session.accessTokenExpires = token.accessTokenExpires
-        }
+      if (token) {
+        session.accessToken = token.accessToken;
+        session.refreshToken = token.refreshToken;
+        session.accessTokenExpires = token.accessTokenExpires;
+        session.user = {
+          id: token.id as number,
+          correo: token.correo as string,
+          nombre: token.nombre as string,
+          roles: token.roles as string[],
+        };
+      }
 
-        return session
-    }
+      return session;
+    },
   },
-  pages:{
+  pages: {
     signIn: "/auth/login",
   },
   secret: process.env.NEXTAUTH_SECRET,
-}
+};

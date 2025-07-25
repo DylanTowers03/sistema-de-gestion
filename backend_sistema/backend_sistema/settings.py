@@ -114,7 +114,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'joenis_db',
         'USER': 'postgres',
-        'PASSWORD': 'admin1234',  # o tu contraseña real
+        'PASSWORD': 'admin',  # o tu contraseña real
         'HOST': 'localhost',
         'PORT': '5432',  # o el puerto si cambiaste (ej. 3307)
         #'OPTIONS': {'it_command': "SET sql_mode='STRICT_TRANS_TABLES'",}

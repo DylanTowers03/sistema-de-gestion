@@ -15,8 +15,7 @@ from Apps.autenticacion.models import Rol
 class ProductoViewSet(APIView):
     permission_classes = [IsInRole]
 
-    roles = Rol.objects.filter(nombreRol__in=['Admin', 'Moderador','Usuario'])
-    required_roles = [role.nombreRol for role in roles]
+    required_roles = ["Admin", "Moderador", "Usuario"]
 
     def post(self, request):
         data = request.data.copy()  
@@ -47,7 +46,6 @@ class ProductoViewSet(APIView):
             except Producto.DoesNotExist:
                 return Response({'error': 'Producto no encontrado'}, status=404)
 
-            serializer = ProductoSerializer(producto)
             return Response(serializer.data)
         
         productos = Producto.objects.all()
@@ -107,8 +105,7 @@ class ProductoViewSet(APIView):
 class TipoProductoViewSet(APIView):
     permission_classes = [IsInRole]
 
-    roles = Rol.objects.filter(nombreRol__in=['Admin', 'Moderador', 'Usuario'])
-    required_roles = [role.nombreRol for role in roles]
+    required_roles = ["Admin", "Moderador", "Usuario"]
 
     def post(self, request):
         serializer = TipoProductoSerializer(data=request.data)
@@ -157,8 +154,7 @@ class TipoProductoViewSet(APIView):
 class CategoriaProductoViewSet(APIView):
     permission_classes = [IsInRole]
 
-    roles = Rol.objects.filter(nombreRol__in=['Admin',"Usuario"])
-    required_roles = [role.nombreRol for role in roles]
+    required_roles = ["Admin", "Moderador", "Usuario"]
 
     def post(self, request):
         serializer = CategoriaProductoSerializer(data=request.data)
