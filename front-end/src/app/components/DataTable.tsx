@@ -22,7 +22,7 @@ export interface Column<T> {
   render?: (item: T) => React.ReactNode;
   sortable?: boolean;
   width?: string;
-}
+} 
 
 interface DataTableProps<T> {
   data: T[];

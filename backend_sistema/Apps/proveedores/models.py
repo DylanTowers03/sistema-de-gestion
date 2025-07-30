@@ -13,3 +13,6 @@ class Proveedor(models.Model):
 class ProveedorProducto(models.Model):
     proveedor = models.ForeignKey(Proveedor, on_delete=models.CASCADE)
     producto = models.ForeignKey(Producto, on_delete=models.CASCADE)
+
+    class Meta:
+        unique_together = ('proveedor', 'producto')

@@ -6,17 +6,19 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Column, DataTable } from "./DataTable";
-
+import { DataSearchFilter } from "./data-search-filter";
 interface ModalTableProps<T> {
   isOpen: boolean;
   onClose: () => void;
-  section: "clientes";
+  section: "clientes" | "proveedores" | "negocios";
   filteredData: T[];
   columns: Column<T>[];
   selectedItems?: T[];
   onSelectionChange?: (items: T[]) => void;
   emptyMessage?: string;
   emptyDescription?: string;
+  searchValue: string;
+  onSearchChange: (value: string) => void;
 }
 
 export function ModalTable<T>({
@@ -29,6 +31,8 @@ export function ModalTable<T>({
   onSelectionChange,
   emptyMessage,
   emptyDescription,
+  searchValue,
+  onSearchChange,
 }: ModalTableProps<T>) {
   return (
     <>
@@ -40,7 +44,19 @@ export function ModalTable<T>({
               Aquí puedes ver y gestionar los datos de los {section}.
             </DialogDescription>
           </DialogHeader>
+
           {/* Aquí iría la tabla con los datos */}
+
+          <DataSearchFilter
+            searchValue={searchValue}
+            onSearchChange={onSearchChange}
+            filters={[]}
+            activeFilters={{}}
+            onFilterChange={() => {}}
+            onClearFilters={() => {}}
+            showAdvancedFilters={false}
+            onToggleAdvancedFilters={() => {}}
+          />
           <DataTable
             data={filteredData}
             columns={columns}

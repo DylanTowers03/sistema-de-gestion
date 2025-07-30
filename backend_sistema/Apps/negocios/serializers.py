@@ -8,6 +8,9 @@ class TipoNegocioSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class TblNegocioSerializer(serializers.ModelSerializer):
+    tipoNegocio = serializers.PrimaryKeyRelatedField(queryset=TipoNegocio.objects.all())  # Escritura con ID
+    tipoNegocioDetalle = TipoNegocioSerializer(source='tipoNegocio', read_only=True)      # Lectura completa
+
     class Meta:
         model = TblNegocio
         fields = '__all__'

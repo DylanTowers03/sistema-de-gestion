@@ -16,9 +16,44 @@ import {
   Receipt,
   UserPlus,
   UserX,
+  Truck,
+  Building2,
+  FilePlus,
+  Ban,
 } from "lucide-react";
 import { signOut } from "next-auth/react";
 import toast from "react-hot-toast";
+
+const proveedorStats = [
+  {
+    title: "Total Proveedores",
+    value: "1,032",
+    change: "+8%",
+    changeType: "positive" as const,
+    icon: Truck,
+  },
+  {
+    title: "Proveedores Nuevos",
+    value: "210",
+    change: "+6%",
+    changeType: "positive" as const,
+    icon: UserPlus,
+  },
+  {
+    title: "Proveedores Inactivos",
+    value: "97",
+    change: "-2%",
+    changeType: "negative" as const,
+    icon: UserX,
+  },
+  {
+    title: "Retención de Proveedores",
+    value: "79%",
+    change: "+3%",
+    changeType: "positive" as const,
+    icon: TrendingUp,
+  },
+];
 
 const clienteStats = [
   {
@@ -48,6 +83,37 @@ const clienteStats = [
     change: "+4%",
     changeType: "positive" as const,
     icon: TrendingUp,
+  },
+];
+
+const negocioStats = [
+  {
+    title: "Total Negocios",
+    value: "1,276",
+    change: "+8%",
+    changeType: "positive" as const,
+    icon: Building2, // ejemplo de icono relacionado con negocios
+  },
+  {
+    title: "Negocios Registrados este Mes",
+    value: "198",
+    change: "+12%",
+    changeType: "positive" as const,
+    icon: FilePlus, // ejemplo de registro nuevo
+  },
+  {
+    title: "Negocios Inactivos",
+    value: "74",
+    change: "-6%",
+    changeType: "negative" as const,
+    icon: Ban, // ejemplo de inactividad
+  },
+  {
+    title: "Crecimiento de Negocios",
+    value: "91%",
+    change: "+7%",
+    changeType: "positive" as const,
+    icon: TrendingUp, // crecimiento
   },
 ];
 
@@ -157,6 +223,102 @@ const clientesActions = [
     permissionIcon: Users,
     color: "purple",
     action: "view",
+  },
+];
+
+const negociosActions = [
+  {
+    title: "Registrar negocio",
+    description: "Agrega un nuevo negocio al sistema",
+    icon: Plus,
+    permissions: "Cualquiera",
+    permissionIcon: Users,
+    color: "green",
+    action: "create",
+  },
+  {
+    title: "Actualizar negocio",
+    description: "Edita la información de un negocio existente",
+    icon: Edit,
+    permissions: "Admin, Moderador",
+    permissionIcon: Crown,
+    color: "blue",
+    action: "update",
+  },
+  {
+    title: "Eliminar negocio",
+    description: "Elimina un negocio del sistema",
+    icon: Trash2,
+    permissions: "Admin",
+    permissionIcon: Shield,
+    color: "red",
+    action: "delete",
+  },
+  {
+    title: "Ver todos",
+    description: "Consulta todos los negocios registrados",
+    icon: Eye,
+    permissions: "Cualquiera",
+    permissionIcon: Users,
+    color: "purple",
+    action: "view",
+  },
+  {
+    title: "Crear tipo de negocio",
+    description: "Crea un tipo de negocio nuevo",
+    icon: Plus,
+    permissions: "Cualquiera",
+    permissionIcon: Users,
+    color: "green",
+    action: "create-type",
+  },
+];
+
+const proveedoresActions = [
+  {
+    title: "Crear proveedor",
+    description: "Agrega un nuevo proveedor al sistema",
+    icon: Plus,
+    permissions: "Cualquiera",
+    permissionIcon: Users,
+    color: "green",
+    action: "create",
+  },
+  {
+    title: "Actualizar proveedor",
+    description: "Edita la información de un proveedor existente",
+    icon: Edit,
+    permissions: "Admin, Moderador",
+    permissionIcon: Crown,
+    color: "blue",
+    action: "update",
+  },
+  {
+    title: "Eliminar proveedor",
+    description: "Elimina un proveedor del sistema",
+    icon: Trash2,
+    permissions: "Admin",
+    permissionIcon: Shield,
+    color: "red",
+    action: "delete",
+  },
+  {
+    title: "Ver todos",
+    description: "Consulta todos los proveedores registrados",
+    icon: Eye,
+    permissions: "Cualquiera",
+    permissionIcon: Users,
+    color: "purple",
+    action: "view",
+  },
+  {
+    title: "Asignar productos",
+    description: "Asigna productos a un proveedor",
+    icon: Package,
+    permissions: "Admin, Moderador",
+    permissionIcon: Crown,
+    color: "orange",
+    action: "assign-products",
   },
 ];
 
@@ -300,12 +462,12 @@ const sidebarItems = [
     href: "/dashboard/productos",
   },
   {
-    title: "Tipos",
+    title: "Tipos de Productos",
     icon: Tags,
     href: "/dashboard/tipos",
   },
   {
-    title: "Categorias",
+    title: "Categorias de Productos",
     icon: FolderOpen,
     href: "/dashboard/categorias",
   },
@@ -345,6 +507,10 @@ const returnErrorMessage = (error: AxiosError) => {
       "Forbidden access. You do not have permission to perform this action."
     );
   }
+
+  if (error.response?.status === 404) {
+    toast.error("Resource not found. Please check the URL.");
+  }
 };
 
 export {
@@ -361,4 +527,8 @@ export {
   categoriasActions,
   clientesActions,
   clienteStats,
+  proveedorStats,
+  proveedoresActions,
+  negocioStats,
+  negociosActions,
 };

@@ -25,14 +25,34 @@ import {
   Hash,
   User,
 } from "lucide-react";
-import type { Product, Tipos, Categorias, Client } from "@/types/types";
+import type {
+  Product,
+  Tipos,
+  Categorias,
+  Client,
+  Proveedor,
+  Negocio,
+} from "@/types/types";
 import { useQuery } from "@tanstack/react-query";
-import { getProducts, getCategorias, getTipos, getClients } from "@/lib/api";
+import {
+  getProducts,
+  getCategorias,
+  getTipos,
+  getClients,
+  getProveedores,
+  getUsuarioNegocio,
+} from "@/lib/api";
 import { useUser } from "./UserContext";
 interface DeleteModalProps {
   isOpen: boolean;
   onClose: () => void;
-  section: "productos" | "tipos" | "categorias" | "clientes";
+  section:
+    | "productos"
+    | "negocios"
+    | "tipos-productos"
+    | "categorias-productos"
+    | "clientes"
+    | "proveedores";
   onDelete: (id: string) => Promise<void>;
 }
 
@@ -44,30 +64,41 @@ export function DeleteModal({
 }: DeleteModalProps) {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedItem, setSelectedItem] = useState<
-    Product | Tipos | Categorias | Client | null
+    Product | Tipos | Categorias | Client | Proveedor | Negocio | null
   >(null);
   const [isDeleting, setIsDeleting] = useState(false);
   const [data, setData] = useState<
-    Product[] | Tipos[] | Categorias[] | Client[]
+    Product[] | Tipos[] | Categorias[] | Client[] | Proveedor[] | Negocio[] | []
   >([]);
   const { session } = useUser();
 
   const { data: queryData } = useQuery<
-    Product[] | Tipos[] | Categorias[] | Client[]
+    Product[] | Tipos[] | Categorias[] | Client[] | Proveedor[] | Negocio[]
   >({
     queryKey: [section],
     queryFn: () => {
       if (section === "productos") {
         return getProducts(session?.accessToken || "");
       }
-      if (section === "tipos") {
+      if (section === "tipos-productos") {
         return getTipos(session?.accessToken || "");
       }
-      if (section === "categorias") {
+      if (section === "categorias-productos") {
         return getCategorias(session?.accessToken || "");
       }
       if (section === "clientes") {
         return getClients(session?.accessToken || "");
+      }
+      if (section === "proveedores") {
+        return getProveedores(session?.accessToken || "");
+      }
+      if (section === "negocios") {
+        console.log("ebtri aqyu");
+
+        return getUsuarioNegocio(
+          session?.accessToken || "",
+          session?.user.id || 0
+        );
       }
       return [];
     },
@@ -82,29 +113,76 @@ export function DeleteModal({
   }, [queryData]);
 
   function isProductArray(
-    data: Product[] | Tipos[] | Categorias[] | Client[]
+    data:
+      | Product[]
+      | Tipos[]
+      | Categorias[]
+      | Client[]
+      | Proveedor[]
+      | Negocio[]
   ): data is Product[] {
     return data.length > 0 && "nombreProducto" in data[0];
   }
 
   function isTipoArray(
-    data: Tipos[] | Categorias[] | Product[] | Client[]
+    data:
+      | Tipos[]
+      | Categorias[]
+      | Product[]
+      | Client[]
+      | Proveedor[]
+      | Negocio[]
   ): data is Tipos[] {
     return data.length > 0 && "nombreTipoProducto" in data[0];
   }
 
   function isCategoriaArray(
-    data: Categorias[] | Product[] | Tipos[] | Client[]
+    data:
+      | Categorias[]
+      | Product[]
+      | Tipos[]
+      | Client[]
+      | Proveedor[]
+      | Negocio[]
   ): data is Categorias[] {
     return data.length > 0 && "nombreCategoria" in data[0];
   }
 
   function isClientArray(
-    data: Client[] | Product[] | Tipos[] | Categorias[]
+    data:
+      | Client[]
+      | Product[]
+      | Tipos[]
+      | Categorias[]
+      | Proveedor[]
+      | Negocio[]
   ): data is Client[] {
     return data.length > 0 && "nombreCliente" in data[0];
   }
 
+  function isProveedorArray(
+    data:
+      | Proveedor[]
+      | Product[]
+      | Tipos[]
+      | Categorias[]
+      | Client[]
+      | Negocio[]
+  ): data is Proveedor[] {
+    return data.length > 0 && "nombre" in data[0];
+  }
+
+  function isNegocioArray(
+    data:
+      | Negocio[]
+      | Product[]
+      | Tipos[]
+      | Categorias[]
+      | Client[]
+      | Proveedor[]
+  ): data is Negocio[] {
+    return data.length > 0 && "nombreNegocio" in data[0];
+  }
   const filteredData = useMemo(() => {
     const lowerSearch = searchTerm.toLowerCase();
 
@@ -135,6 +213,18 @@ export function DeleteModal({
           item.apellidoCliente.toString().includes(lowerSearch)
         );
       });
+    }
+
+    if (isProveedorArray(data)) {
+      return data.filter((item) =>
+        item.nombre.toLowerCase().includes(lowerSearch)
+      );
+    }
+
+    if (isNegocioArray(data)) {
+      return data.filter((item) =>
+        item.nombreNegocio.toLowerCase().includes(lowerSearch)
+      );
     }
 
     return [];
@@ -196,7 +286,6 @@ export function DeleteModal({
             />
           </div>
 
-          {/* Products List */}
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <h3 className="text-sm font-medium text-muted-foreground">
@@ -388,6 +477,102 @@ export function DeleteModal({
                                   <User className="h-4 w-4 text-muted-foreground" />
                                   <h4 className="font-medium text-sm">
                                     {el.nombreCliente} {el.apellidoCliente}
+                                  </h4>
+                                </div>
+
+                                <div className="flex items-center space-x-4 text-xs text-muted-foreground">
+                                  <div className="flex items-center space-x-1">
+                                    <Hash className="h-3 w-3" />
+                                    <span>ID: {el.id}</span>
+                                  </div>
+                                </div>
+                              </div>
+                              {selectedItem?.id === el.id && (
+                                <motion.div
+                                  initial={{ scale: 0 }}
+                                  animate={{ scale: 1 }}
+                                  className="ml-2"
+                                >
+                                  <div className="w-2 h-2 bg-red-500 rounded-full"></div>
+                                </motion.div>
+                              )}
+                            </div>
+                          </CardContent>
+                        </Card>
+                      </motion.div>
+                    ))}
+                  {isProveedorArray(filteredData) &&
+                    filteredData.map((el) => (
+                      <motion.div
+                        key={el.id}
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -10 }}
+                        transition={{ duration: 0.2 }}
+                      >
+                        <Card
+                          className={`cursor-pointer transition-all duration-200 hover:shadow-md ${
+                            selectedItem?.id === el.id
+                              ? "ring-2 ring-red-500 bg-red-50 dark:bg-red-900/10"
+                              : "hover:bg-muted/50"
+                          }`}
+                          onClick={() => setSelectedItem(el)}
+                        >
+                          <CardContent className="p-4">
+                            <div className="flex items-center justify-between">
+                              <div className="flex-1">
+                                <div className="flex items-center space-x-2 mb-1">
+                                  <User className="h-4 w-4 text-muted-foreground" />
+                                  <h4 className="font-medium text-sm">
+                                    {el.nombre}
+                                  </h4>
+                                </div>
+
+                                <div className="flex items-center space-x-4 text-xs text-muted-foreground">
+                                  <div className="flex items-center space-x-1">
+                                    <Hash className="h-3 w-3" />
+                                    <span>ID: {el.id}</span>
+                                  </div>
+                                </div>
+                              </div>
+                              {selectedItem?.id === el.id && (
+                                <motion.div
+                                  initial={{ scale: 0 }}
+                                  animate={{ scale: 1 }}
+                                  className="ml-2"
+                                >
+                                  <div className="w-2 h-2 bg-red-500 rounded-full"></div>
+                                </motion.div>
+                              )}
+                            </div>
+                          </CardContent>
+                        </Card>
+                      </motion.div>
+                    ))}
+                  {isNegocioArray(filteredData) &&
+                    filteredData.map((el) => (
+                      <motion.div
+                        key={el.id}
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -10 }}
+                        transition={{ duration: 0.2 }}
+                      >
+                        <Card
+                          className={`cursor-pointer transition-all duration-200 hover:shadow-md ${
+                            selectedItem?.id === el.id
+                              ? "ring-2 ring-red-500 bg-red-50 dark:bg-red-900/10"
+                              : "hover:bg-muted/50"
+                          }`}
+                          onClick={() => setSelectedItem(el)}
+                        >
+                          <CardContent className="p-4">
+                            <div className="flex items-center justify-between">
+                              <div className="flex-1">
+                                <div className="flex items-center space-x-2 mb-1">
+                                  <User className="h-4 w-4 text-muted-foreground" />
+                                  <h4 className="font-medium text-sm">
+                                    {el.nombreNegocio}
                                   </h4>
                                 </div>
 

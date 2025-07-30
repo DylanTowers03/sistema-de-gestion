@@ -2,6 +2,8 @@ import CardsActions from "./cards-products-actions";
 import { tiposActions } from "../../lib/constants";
 
 export default function DashboardTipos() {
+  console.log("DashboardTipos rendered");
+
   return (
     <>
       <CardsActions

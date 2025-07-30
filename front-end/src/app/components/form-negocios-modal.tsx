@@ -26,21 +26,34 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Loader2, Package, Save, Search, X } from "lucide-react";
-import { TiposFormData, Tipos, tiposFormSchema } from "@/types/types";
+import { getTiposNegocio, getUsuarioNegocio } from "@/lib/api";
 import { useQuery } from "@tanstack/react-query";
 import { useUser } from "./UserContext";
 import toast from "react-hot-toast";
 import { AxiosError } from "axios";
 import { signOut } from "next-auth/react";
-import { getTipos } from "@/lib/api";
+import {
+  NegociosFormData,
+  NegocioFormSchema,
+  Negocio,
+  TipoNegocio,
+} from "@/types/types";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+
 interface FormModalProps {
   isOpen: boolean;
   onClose: () => void;
   mode: "create" | "update";
-  onSubmit: (data: TiposFormData, id?: string) => Promise<void>;
+  onSubmit: (data: NegociosFormData, id?: string) => Promise<void>;
 }
 
-export function FormModalTipos({
+export function FormNegociosModal({
   isOpen,
   onClose,
   mode,
@@ -48,14 +61,44 @@ export function FormModalTipos({
 }: FormModalProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedTipos, setSelectedTipos] = useState<Tipos | null>(null);
-  const [tipos, setTipos] = useState<Tipos[]>([]);
+  const [selectedNegocio, setSelectedNegocio] = useState<Negocio | null>(null);
+  const [negocios, setNegocios] = useState<Negocio[]>([]);
   const { session } = useUser();
+  const [tiposNegocio, setTiposNegocio] = useState<TipoNegocio[]>([]);
 
   const { data, error } = useQuery({
-    queryKey: ["tipos"],
-    queryFn: () => getTipos(session?.accessToken || ""),
+    queryKey: ["negocios"],
+    queryFn: () =>
+      getUsuarioNegocio(session?.accessToken || "", session?.user.id || 0),
   });
+
+  const { data: tipos } = useQuery({
+    queryKey: ["tiposNegocio"],
+    queryFn: () => getTiposNegocio(session?.accessToken || ""),
+  });
+
+  const form = useForm<NegociosFormData>({
+    resolver: zodResolver(NegocioFormSchema),
+    defaultValues: {
+      nombreNegocio: "",
+      direccion: "",
+      tipoNegocio: "",
+      telefono: "",
+      correo: "",
+    },
+  });
+
+  useEffect(() => {
+    if (tipos) {
+      setTiposNegocio(tipos);
+    }
+  }, [tipos]);
+
+  useEffect(() => {
+    if (data) {
+      setNegocios(data);
+    }
+  }, [data]);
 
   useEffect(() => {
     if (error instanceof AxiosError && error.status === 401) {
@@ -66,36 +109,48 @@ export function FormModalTipos({
   }, [error]);
 
   useEffect(() => {
-    if (data) {
-      setTipos(data);
-    }
-  }, [data]);
-
-  const form = useForm<TiposFormData>({
-    resolver: zodResolver(tiposFormSchema),
-    defaultValues: {
-      nombreTipoProducto: "",
-    },
-  });
+    form.reset({
+      nombreNegocio: selectedNegocio?.nombreNegocio || "",
+      direccion: selectedNegocio?.direccion || "",
+      tipoNegocio: selectedNegocio?.tipoNegocio || "",
+      telefono: selectedNegocio?.telefono || "",
+      correo: selectedNegocio?.correo || "",
+    });
+  }, [selectedNegocio, form]);
 
   useEffect(() => {
-    form.reset({
-      nombreTipoProducto: selectedTipos?.nombreTipoProducto || "",
+    if (mode === "create") {
+      form.reset({
+        nombreNegocio: "",
+        direccion: "",
+        tipoNegocio: "",
+        telefono: "",
+        correo: "",
+      });
+      setSelectedNegocio(null); // Limpia también la selección anterior
+    }
+  }, [mode, form]);
+
+  const filteredNegocios = useMemo(() => {
+    console.log(negocios);
+    return negocios.filter((negocio) => {
+      return (
+        negocio.nombreNegocio
+          .toLowerCase()
+          .includes(searchTerm.toLowerCase()) ||
+        negocio.tipoNegocio.toLowerCase().includes(searchTerm.toLowerCase())
+      );
     });
-  }, [selectedTipos, form]);
+  }, [searchTerm, negocios]);
 
-  const filteredtipos = useMemo(() => {
-    return tipos.filter((tipo) =>
-      tipo.nombreTipoProducto.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-  }, [searchTerm, tipos]);
+  const handleSubmit = async (data: NegociosFormData) => {
+    console.log("sahhjas");
 
-  const handleSubmit = async (data: TiposFormData) => {
     setIsSubmitting(true);
     try {
-      await onSubmit(data, selectedTipos?.id);
+      await onSubmit(data, selectedNegocio?.id);
       form.reset();
-      setSelectedTipos(null);
+      setSelectedNegocio(null);
       setSearchTerm("");
       onClose();
     } catch (error) {
@@ -106,8 +161,10 @@ export function FormModalTipos({
   };
 
   const handleClose = () => {
+    console.log("Closing modal");
+
     form.reset();
-    setSelectedTipos(null);
+    setSelectedNegocio(null);
     setSearchTerm("");
     onClose();
   };
@@ -122,12 +179,12 @@ export function FormModalTipos({
             </div>
             <div>
               <DialogTitle className="text-xl font-semibold">
-                {mode === "create" ? `Crear Tipo` : `Actualizar Tipo`}
+                {mode === "create" ? `Registrar negocio` : `Actualizar negocio`}
               </DialogTitle>
               <DialogDescription>
                 {mode === "create"
-                  ? `Completa la información para crear un nuevo tipo`
-                  : `Modifica la información del tipo seleccionado`}
+                  ? `Completa la información para registrar un nuevo negocio`
+                  : `Modifica la información del negocio seleccionado`}
               </DialogDescription>
             </div>
           </div>
@@ -144,7 +201,7 @@ export function FormModalTipos({
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
-                placeholder={`Buscar por nombre o ID del tipo...`}
+                placeholder={`Buscar por nombre o tipo de negocio...`}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="pl-10"
@@ -154,11 +211,11 @@ export function FormModalTipos({
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <h3 className="text-sm font-medium text-muted-foreground">
-                  Tipos Disponibles ({tipos.length})
+                  Negocios Disponibles ({negocios.length})
                 </h3>
-                {selectedTipos && (
+                {selectedNegocio && (
                   <Badge variant="outline" className="text-xs">
-                    Tipo Seleccionado
+                    Negocio Seleccionado
                   </Badge>
                 )}
               </div>
@@ -166,9 +223,9 @@ export function FormModalTipos({
               <ScrollArea className="h-[200px] w-full border rounded-md">
                 <div className="p-2 space-y-2">
                   <AnimatePresence>
-                    {filteredtipos.map((tipo) => (
+                    {filteredNegocios.map((negocio) => (
                       <motion.div
-                        key={tipo.id}
+                        key={negocio.id}
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -10 }}
@@ -176,11 +233,11 @@ export function FormModalTipos({
                       >
                         <Card
                           className={`cursor-pointer transition-all duration-200 hover:shadow-md border-none shadow-none ${
-                            selectedTipos?.id === tipo.id
+                            selectedNegocio?.id === negocio.id
                               ? "ring-2 ring-blue-500 bg-blue-50 dark:bg-red-900/10"
                               : "hover:bg-muted/50"
                           }`}
-                          onClick={() => setSelectedTipos(tipo)}
+                          onClick={() => setSelectedNegocio(negocio)}
                         >
                           <CardContent>
                             <div className="flex items-center justify-between">
@@ -188,11 +245,11 @@ export function FormModalTipos({
                                 <div className="flex items-center space-x-2 mb-1">
                                   <Package className="h-4 w-4 text-muted-foreground" />
                                   <h4 className="font-medium text-sm">
-                                    {tipo.nombreTipoProducto}
+                                    {negocio.nombreNegocio}
                                   </h4>
                                 </div>
                               </div>
-                              {selectedTipos?.id === tipo.id && (
+                              {selectedNegocio?.id === negocio.id && (
                                 <motion.div
                                   initial={{ scale: 0 }}
                                   animate={{ scale: 1 }}
@@ -208,10 +265,10 @@ export function FormModalTipos({
                     ))}
                   </AnimatePresence>
 
-                  {tipos.length === 0 && (
+                  {negocios.length === 0 && (
                     <div className="text-center py-8 text-muted-foreground">
                       <Package className="h-8 w-8 mx-auto mb-2 opacity-50" />
-                      <p className="text-sm">No se encontraron productos</p>
+                      <p className="text-sm">No se encontraron negocios</p>
                     </div>
                   )}
                 </div>
@@ -219,22 +276,24 @@ export function FormModalTipos({
             </div>
           </div>
         )}
+
         <Form {...form}>
           <form
-            onSubmit={form.handleSubmit(handleSubmit)}
+            onSubmit={form.handleSubmit(handleSubmit, (errors) => {
+              console.log("Errores de validación", errors);
+            })}
             className="space-y-6"
           >
-            <div className="grid gap-4 md:grid-cols-2">
-              {/* Product Name */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <FormField
                 control={form.control}
-                name="nombreTipoProducto"
+                name="nombreNegocio"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Nombre del tipo</FormLabel>
+                    <FormLabel>Nombre del negocio*</FormLabel>
                     <FormControl>
                       <Input
-                        placeholder={`${"Nombre del tipo o categoría"}`}
+                        placeholder="Ingrese el nombre del negocio"
                         {...field}
                       />
                     </FormControl>
@@ -242,8 +301,81 @@ export function FormModalTipos({
                   </FormItem>
                 )}
               />
-            </div>
 
+              <FormField
+                control={form.control}
+                name="tipoNegocio"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Tipo de negocio*</FormLabel>
+                    <Select
+                      onValueChange={field.onChange}
+                      value={field.value.toString()}
+                    >
+                      <FormControl>
+                        {/* i need that the width be the same everywhere */}
+                        <SelectTrigger>
+                          <SelectValue placeholder="Categoría" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {tiposNegocio.map((tipo) => (
+                          <SelectItem
+                            key={String(tipo.id)}
+                            value={tipo.nombreTipoNegocio}
+                          >
+                            {tipo.nombreTipoNegocio}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="telefono"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Teléfono*</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Ingrese el teléfono" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="direccion"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Dirección*</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Ingrese la dirección" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="correo"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Correo electrónico*</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Ingrese el correo" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
             <div className="flex justify-end space-x-3 pt-4 border-t">
               <Button
                 type="button"
@@ -254,13 +386,13 @@ export function FormModalTipos({
                 <X className="w-4 h-4 mr-2" />
                 Cancelar
               </Button>
-              <Button type="submit" disabled={isSubmitting}>
+              <Button type="submit">
                 {isSubmitting ? (
                   <Loader2 className="w-4 h-4 mr-2 animate-spin" />
                 ) : (
                   <Save className="w-4 h-4 mr-2" />
                 )}
-                {mode === "create" ? "Crear" : "Actualizar"} Tipo
+                {mode === "create" ? "Registrar" : "Actualizar"}
               </Button>
             </div>
           </form>

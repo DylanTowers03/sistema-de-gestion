@@ -46,12 +46,6 @@ const fadeInRight = {
   transition: { duration: 0.6, ease: "easeOut" },
 };
 
-const scaleIn = {
-  initial: { opacity: 0, scale: 0.8 },
-  animate: { opacity: 1, scale: 1 },
-  transition: { duration: 0.5, ease: "easeOut" },
-};
-
 const staggerContainer = {
   animate: {
     transition: {
@@ -98,6 +92,29 @@ const AnimatedCounter = ({
   return <span ref={ref}>{count}%</span>;
 };
 
+const headerSectionVariants = [
+  {
+    item: "Inicio",
+    href: "#inicio",
+  },
+  {
+    item: "Dashboard",
+    href: "/dashboard/home",
+  },
+  {
+    item: "Login",
+    href: "/auth/login",
+  },
+  {
+    item: "Registro",
+    href: "/auth/register",
+  },
+  {
+    item: "Contacto",
+    href: "#contacto",
+  },
+];
+
 export default function LandingPage() {
   const { scrollYProgress } = useScroll();
   const headerY = useTransform(scrollYProgress, [0, 0.1], [0, -50]);
@@ -140,22 +157,20 @@ export default function LandingPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
           >
-            {["Inicio", "Problema", "Solución", "Beneficios", "Contacto"].map(
-              (item, index) => (
-                <motion.div
-                  key={item}
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
+            {headerSectionVariants.map((item, index) => (
+              <motion.div
+                key={index}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <Link
+                  href={`${item.href}`}
+                  className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors"
                 >
-                  <Link
-                    href={`#${item.toLowerCase()}`}
-                    className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors"
-                  >
-                    {item}
-                  </Link>
-                </motion.div>
-              )
-            )}
+                  {item.item}
+                </Link>
+              </motion.div>
+            ))}
           </motion.nav>
         </div>
       </motion.header>

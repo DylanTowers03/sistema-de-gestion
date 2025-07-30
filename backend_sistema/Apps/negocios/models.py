@@ -27,4 +27,5 @@ class UsuarioNegocio(models.Model):
     negocio = models.ForeignKey(TblNegocio, on_delete=models.CASCADE)
 
     class Meta:
+        unique_together = ('usuario', 'negocio')
         db_table = 'tbl_negocio_has_Usuario'
