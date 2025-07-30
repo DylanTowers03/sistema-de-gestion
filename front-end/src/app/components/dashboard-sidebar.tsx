@@ -7,28 +7,60 @@ import { useState } from "react";
 import { useDashboardWindow } from "./DashboardWindowProvider";
 import { sidebarItems } from "@/lib/constants";
 import { ChevronRight } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 interface DashboardSidebarProps {
   className?: string;
 }
 
 export function DashboardSidebar({ className }: DashboardSidebarProps) {
-  const [activeItem, setActiveItem] = useState<string | null>("Productos");
+  const pathname = usePathname();
+
+  const active = pathname.split("/").pop() || "";
+  console.log("Active Path:", active);
+
+  const [activeItem, setActiveItem] = useState<string | null>(
+    active != "home" ? active.toLowerCase() : "productos"
+  );
+
   const { setWhatIsOpen } = useDashboardWindow();
   const router = useRouter();
   const handleItemClick = (title: string) => {
     setActiveItem(title);
-    if (title === "Productos" || title === "Tipos" || title === "Categorias") {
-      setWhatIsOpen(
-        title.toLowerCase() as "productos" | "tipos" | "categorias"
-      );
+    if (
+      title === "Productos" ||
+      title === "Tipos de Productos" ||
+      title === "Categorias de Productos"
+    ) {
+      // Set the state to open the corresponding section
+      if (title === "Productos") {
+        setWhatIsOpen("productos");
+      } else if (title === "Tipos de Productos") {
+        setWhatIsOpen("tipos");
+        setActiveItem("tipos de productos");
+      } else if (title === "Categorias de Productos") {
+        setWhatIsOpen("categorias");
+        setActiveItem("categorias de productos");
+      }
 
       router.push("/dashboard/home");
     }
 
     if (title === "Clientes") {
       //navidate to Clientes page
+      setWhatIsOpen("clientes");
       router.push("/dashboard/clientes");
+    }
+
+    if (title === "Proveedores") {
+      //navigate to Proveedores page
+      setWhatIsOpen("proveedores");
+      router.push("/dashboard/proveedores");
+    }
+
+    if (title === "Negocios") {
+      //navigate to Negocios page
+      setWhatIsOpen("negocios");
+      router.push("/dashboard/negocios");
     }
   };
 
@@ -42,12 +74,16 @@ export function DashboardSidebar({ className }: DashboardSidebarProps) {
                 {sidebarItems.map((item) => (
                   <Button
                     key={item.title}
-                    variant={activeItem === item.title ? "secondary" : "ghost"}
+                    variant={
+                      activeItem === item.title.toLowerCase()
+                        ? "secondary"
+                        : "ghost"
+                    }
                     onClick={() => handleItemClick(item.title)}
                     className={cn(
                       "w-full justify-start h-10 px-3 cursor-pointer",
                       `${
-                        activeItem === item.title
+                        activeItem === item.title.toLowerCase()
                           ? "bg-secondary text-secondary-foreground"
                           : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
                       }`
@@ -55,7 +91,7 @@ export function DashboardSidebar({ className }: DashboardSidebarProps) {
                   >
                     <item.icon className="mr-3 h-4 w-4" />
                     <span className="flex-1 text-left">{item.title}</span>
-                    {activeItem === item.title && (
+                    {activeItem === item.title.toLowerCase() && (
                       <ChevronRight className="ml-auto h-4 w-4" />
                     )}
                   </Button>

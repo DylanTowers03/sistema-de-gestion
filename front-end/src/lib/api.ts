@@ -5,6 +5,9 @@ import {
   Tipos,
   Categorias,
   Client,
+  Proveedor,
+  Negocio,
+  TipoNegocio,
 } from "@/types/types";
 const BACKEND_URL = process.env.BACKEND_URL || "http://localhost:8000/";
 
@@ -281,4 +284,222 @@ export async function deleteClient(id: string, token: string): Promise<void> {
       Authorization: `Bearer ${token}`,
     },
   });
+}
+
+export async function getProveedores(token: string): Promise<Proveedor[]> {
+  const response = await axios.get(
+    `${BACKEND_URL}proveedores/api/proveedores/`,
+    {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+
+  return response.data;
+}
+
+export async function createProveedor(
+  data: Omit<Proveedor, "id">,
+  token: string
+): Promise<Proveedor> {
+  const response = await axios.post(
+    `${BACKEND_URL}proveedores/api/proveedores/`,
+    data,
+    {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+
+  return response.data;
+}
+
+export async function updateProveedor(
+  data: Partial<Proveedor>,
+  token: string
+): Promise<Proveedor> {
+  const response = await axios.patch(
+    `${BACKEND_URL}proveedores/api/proveedores/${data.id}/`,
+    data,
+    {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+
+  return response.data;
+}
+
+export async function deleteProveedor(
+  id: string,
+  token: string
+): Promise<void> {
+  await axios.delete(`${BACKEND_URL}proveedores/api/proveedores/${id}/`, {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  });
+}
+
+export async function assingProveedorToProducto(
+  productoId: number[],
+  proveedorId: number,
+  token: string
+): Promise<void> {
+  const response = await axios.post(
+    `${BACKEND_URL}proveedores/api/proveedor-productos/`,
+    {
+      producto: productoId,
+      proveedor: proveedorId,
+    },
+    {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+
+  return response.data;
+}
+
+/*
+export async function getNegocios(token: string): Promise<Negocio[]> {
+  const response = await axios.get(`${BACKEND_URL}negocios/api/negocios/`, {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  return response.data;
+}
+*/
+
+export async function createNegocio(
+  data: Omit<Negocio, "id">,
+  token: string
+): Promise<Negocio> {
+  const response = await axios.post(
+    `${BACKEND_URL}negocios/api/negocios/`,
+    data,
+    {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+
+  return response.data;
+}
+
+export async function updateNegocio(
+  data: Partial<Negocio>,
+  token: string
+): Promise<Negocio> {
+  const response = await axios.patch(
+    `${BACKEND_URL}negocios/api/negocios/${data.id}/`,
+    data,
+    {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+
+  return response.data;
+}
+
+export async function deleteNegocio(id: string, token: string): Promise<void> {
+  await axios.delete(`${BACKEND_URL}negocios/api/negocios/${id}/`, {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  });
+}
+
+export async function getTiposNegocio(token: string): Promise<TipoNegocio[]> {
+  const response = await axios.get(`${BACKEND_URL}negocios/api/tipo-negocio/`, {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  return response.data;
+}
+
+export async function createTipoNegocio(
+  data: Omit<TipoNegocio, "id">,
+  token: string
+): Promise<TipoNegocio> {
+  const response = await axios.post(
+    `${BACKEND_URL}negocios/api/tipo-negocio/`,
+    data,
+    {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+
+  return response.data;
+}
+
+export async function updateTipoNegocio(
+  data: Partial<TipoNegocio>,
+  token: string
+): Promise<TipoNegocio> {
+  const response = await axios.patch(
+    `${BACKEND_URL}negocios/api/tipo-negocio/${data.id}/`,
+    data,
+    {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+
+  return response.data;
+}
+
+export async function deleteTipoNegocio(
+  id: string,
+  token: string
+): Promise<void> {
+  await axios.delete(`${BACKEND_URL}negocios/api/tipo-negocio/${id}/`, {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  });
+}
+
+export async function getUsuarioNegocio(
+  token: string,
+  idUser: number
+): Promise<Negocio[]> {
+  const response = await axios.get(
+    `${BACKEND_URL}negocios/api/usuario-negocio/${idUser}`,
+    {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+
+  return response.data;
 }

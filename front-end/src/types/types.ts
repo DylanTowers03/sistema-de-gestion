@@ -87,6 +87,31 @@ export const clientesFormSchema = z.object({
 
 type ClientFormData = z.infer<typeof clientesFormSchema>;
 
+export const proveedoresFormSchema = z.object({
+  nombre: z
+    .string()
+    .min(1, "El nombre es requerido")
+    .max(100, "Máximo 100 caracteres"),
+  telefono: z
+    .string()
+    .min(1, "El teléfono es requerido")
+    .max(20, "Máximo 20 caracteres"),
+  correo: z
+    .string()
+    .email("Correo electrónico inválido")
+    .max(100, "Máximo 100 caracteres"),
+  direccion: z
+    .string()
+    .min(1, "La dirección es requerida")
+    .max(500, "Máximo 500 caracteres"),
+  tipoProveedor: z
+    .string()
+    .min(1, "El tipo de proveedor es requerido")
+    .max(100, "Máximo 100 caracteres"),
+});
+
+type ProveedoresFormData = z.infer<typeof proveedoresFormSchema>;
+
 export const CategoriasFormSchema = z.object({
   nombreCategoria: z
     .string()
@@ -131,6 +156,128 @@ type Action = {
   action: string;
 };
 
+/*
+
+class Proveedor(models.Model):
+    nombre = models.CharField(max_length=100)
+    telefono = models.CharField(max_length=20)
+    correo = models.CharField(max_length=100)
+    direccion = models.TextField()
+    tipoProveedor = models.CharField(max_length=100)
+
+class ProveedorProducto(models.Model):
+    proveedor = models.ForeignKey(Proveedor, on_delete=models.CASCADE)
+    producto = models.ForeignKey(Producto, on_delete=models.CASCADE)
+*/
+
+type Proveedor = {
+  id: string;
+  nombre: string;
+  telefono: string;
+  correo: string;
+  direccion: string;
+  tipoProveedor: string;
+};
+
+/*
+class TipoNegocio(models.Model):
+    nombreTipoNegocio = models.CharField(max_length=100)
+    descripcion = models.TextField()
+
+    def __str__(self):
+        return self.nombre
+
+    class Meta:
+        verbose_name = "tipo negocio"
+        verbose_name_plural = "tipo negocios"
+
+class TblNegocio(models.Model):
+    nombreNegocio = models.CharField(max_length=100)
+    direccion = models.TextField()
+    telefono = models.CharField(max_length=20)
+    correo = models.CharField(max_length=255)
+    fechaCreacion = models.DateField()
+    tipoNegocio = models.ForeignKey(TipoNegocio, on_delete=models.SET_NULL, null=True)
+
+class UsuarioNegocio(models.Model):
+    usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE)
+    negocio = models.ForeignKey(TblNegocio, on_delete=models.CASCADE)
+
+    class Meta:
+        unique_together = ('usuario', 'negocio')
+        db_table = 'tbl_negocio_has_Usuario'
+*/
+
+interface TipoNegocio {
+  id: string;
+  nombreTipoNegocio: string;
+  descripcion: string;
+}
+
+type Negocio = {
+  id: string;
+  nombreNegocio: string;
+  direccion: string;
+  telefono: string;
+  correo: string;
+  fechaCreacion?: string;
+  tipoNegocio: string;
+  tipoNegocioDetails?: TipoNegocio;
+};
+
+type UsuarioNegocio = {
+  id: string;
+  usuario: Pick<User, "id">;
+  negocio: Pick<Negocio, "id">;
+};
+
+export const NegocioFormSchema = z.object({
+  nombreNegocio: z
+    .string()
+    .min(1, "El nombre del negocio es requerido")
+    .max(100, "Máximo 100 caracteres"),
+  direccion: z
+    .string()
+    .min(1, "La dirección es requerida")
+    .max(500, "Máximo 500 caracteres"),
+  telefono: z
+    .string()
+    .min(1, "El teléfono es requerido")
+    .max(20, "Máximo 20 caracteres"),
+  correo: z
+    .string()
+    .email("Correo electrónico inválido")
+    .max(100, "Máximo 100 caracteres"),
+  tipoNegocio: z.string().min(1, "El tipo de negocio es requerido"),
+});
+
+type NegociosFormData = z.infer<typeof NegocioFormSchema>;
+
+export const TipoNegocioFormSchema = z.object({
+  nombreTipoNegocio: z
+    .string()
+    .min(1, "El nombre es requerido")
+    .max(100, "Máximo 100 caracteres"),
+  descripcion: z
+    .string()
+    .min(1, "La descripcion es requerida")
+    .max(500, "Máximo 500 caracteres"),
+});
+
+type TipoNegocioFormData = z.infer<typeof TipoNegocioFormSchema>;
+
+export const UsuarioNegocioFormSchema = z.object({
+  usuario: z.string().min(1, "El usuario es requerido"),
+  negocio: z.string().min(1, "El negocio es requerido"),
+});
+
+type UsuarioNegocioFormData = z.infer<typeof UsuarioNegocioFormSchema>;
+
+type ProveedorProducto = {
+  id: string;
+  proveedor: Pick<Proveedor, "id">;
+  producto: Pick<Product, "id">;
+};
 type Client = {
   id: string;
   nombreCliente: string;
@@ -171,6 +318,7 @@ type filterOptions = {
     label: string;
   }[];
 };
+
 export type {
   DataItem,
   filterOptions,
@@ -189,4 +337,13 @@ export type {
   AnonymousAction,
   ClientFormData,
   Client,
+  Proveedor,
+  ProveedorProducto,
+  ProveedoresFormData,
+  Negocio,
+  TipoNegocio,
+  UsuarioNegocio,
+  UsuarioNegocioFormData,
+  NegociosFormData,
+  TipoNegocioFormData,
 };

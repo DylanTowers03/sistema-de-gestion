@@ -1,7 +1,13 @@
 "use client";
 import React, { createContext } from "react";
 
-type WhatIsOpen = "productos" | "tipos" | "categorias";
+type WhatIsOpen =
+  | "productos"
+  | "tipos"
+  | "categorias"
+  | "clientes"
+  | "proveedores"
+  | "negocios";
 
 const DashboardWindowContext = createContext({
   whatIsOpen: "productos" as WhatIsOpen,

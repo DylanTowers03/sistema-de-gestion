@@ -137,8 +137,6 @@ export default function ProductosPage() {
 
   const filteredProducts = React.useMemo(() => {
     return products.filter((product) => {
-      console.log(product.categoria, activeFilters.categoria);
-
       const matchSearch =
         searchValue === "" ||
         product.nombreProducto

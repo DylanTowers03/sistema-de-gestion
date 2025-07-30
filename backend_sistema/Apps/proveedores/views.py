@@ -6,10 +6,10 @@ from django.shortcuts import get_object_or_404
 from .models import Proveedor, ProveedorProducto
 from .serializers import ProveedorSerializer, ProveedorProductoSerializer
 from Apps.autenticacion.permissions import IsInRole
-
+from Apps.productos.models import Producto
 class ProveedorViewSet(APIView):
     permission_classes = [IsInRole]
-    required_roles = ["Admin", "Moderador"]
+    required_roles = ["Admin", "Moderador","Usuario"]
 
     def post(self, request):
         serializer = ProveedorSerializer(data=request.data)
@@ -60,14 +60,32 @@ class ProveedorViewSet(APIView):
 
 class ProveedorProductoViewSet(APIView):
     permission_classes = [IsInRole]
-    required_roles = ["Admin" ]
+    required_roles = ["Admin","Usuario"]
 
     def post(self, request):
-        serializer = ProveedorProductoSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=201)
-        return Response(serializer.errors, status=400)
+        data = request.data.copy()
+
+        proveedor_id = data.get('proveedor')
+        productos_ids = data.get('producto', [])  # Esto es una lista de IDs
+
+        if not proveedor_id or not productos_ids:
+            return Response({'error': 'Debe incluir proveedor y producto(s).'}, status=400)
+
+        created_relations = []
+
+        for producto_id in productos_ids:
+            serializer = ProveedorProductoSerializer(data={
+                'proveedor': proveedor_id,
+                'producto': producto_id
+            })
+            if serializer.is_valid():
+                serializer.save()
+                created_relations.append(serializer.data)
+            else:
+                return Response(serializer.errors, status=400)
+
+        return Response(created_relations, status=201)
+
 
     def get(self, request, pk=None):
         if pk is not None:

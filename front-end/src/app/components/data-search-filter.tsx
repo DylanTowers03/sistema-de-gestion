@@ -22,10 +22,10 @@ interface FilterOption {
 interface DataSearchFilterProps {
   searchValue: string;
   onSearchChange: (value: string) => void;
-  filters: FilterOption[];
-  activeFilters: Record<string, string>;
-  onFilterChange: (key: string, value: string) => void;
-  onClearFilters: () => void;
+  filters?: FilterOption[];
+  activeFilters?: Record<string, string>;
+  onFilterChange?: (key: string, value: string) => void;
+  onClearFilters?: () => void;
   showAdvancedFilters?: boolean;
   onToggleAdvancedFilters?: () => void;
 }
@@ -40,7 +40,9 @@ export function DataSearchFilter({
   showAdvancedFilters = false,
   onToggleAdvancedFilters,
 }: DataSearchFilterProps) {
-  const activeFilterCount = Object.values(activeFilters).filter(Boolean).length;
+  const activeFilterCount = Object.values(activeFilters || {}).filter(
+    Boolean
+  ).length;
 
   return (
     <motion.div
@@ -99,33 +101,34 @@ export function DataSearchFilter({
           <Card>
             <CardContent className="p-4">
               <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                {filters.map((filter) => (
-                  <div key={filter.key} className="space-y-2">
-                    <label className="text-sm font-medium">
-                      {filter.label}
-                    </label>
-                    <Select
-                      value={activeFilters[filter.key] || "all"}
-                      onValueChange={(value) =>
-                        onFilterChange(filter.key, value)
-                      }
-                    >
-                      <SelectTrigger>
-                        <SelectValue
-                          placeholder={`Seleccionar ${filter.label.toLowerCase()}`}
-                        />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="all">Todos</SelectItem>
-                        {filter.options.map((option) => (
-                          <SelectItem key={option.value} value={option.value}>
-                            {option.label}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                ))}
+                {filters &&
+                  filters.map((filter) => (
+                    <div key={filter.key} className="space-y-2">
+                      <label className="text-sm font-medium">
+                        {filter.label}
+                      </label>
+                      <Select
+                        value={activeFilters?.[filter.key] || "all"}
+                        onValueChange={(value) =>
+                          onFilterChange?.(filter.key, value)
+                        }
+                      >
+                        <SelectTrigger>
+                          <SelectValue
+                            placeholder={`Seleccionar ${filter.label.toLowerCase()}`}
+                          />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="all">Todos</SelectItem>
+                          {filter.options.map((option) => (
+                            <SelectItem key={option.value} value={option.value}>
+                              {option.label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  ))}
               </div>
             </CardContent>
           </Card>
@@ -142,13 +145,14 @@ export function DataSearchFilter({
           <span className="text-sm text-muted-foreground">
             Filtros activos:
           </span>
-          {Object.entries(activeFilters).map(
+          {Object.entries(activeFilters || {}).map(
             ([key, value]) =>
               value && (
                 <Badge key={key} variant="secondary" className="text-xs">
-                  {filters.find((f) => f.key === key)?.label}: {value}
+                  {filters && filters.find((f) => f.key === key)?.label}:{" "}
+                  {value}
                   <button
-                    onClick={() => onFilterChange(key, "")}
+                    onClick={() => onFilterChange?.(key, "")}
                     className="ml-1 hover:bg-muted-foreground/20 rounded-full p-0.5"
                   >
                     <X className="w-3 h-3" />

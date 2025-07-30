@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -15,15 +17,21 @@ import {
   getIconColorClasses,
   returnErrorMessage,
 } from "@/lib/constants";
-import { AnonymousAction, Client, ClientFormData } from "@/types/types";
+import {
+  AnonymousAction,
+  Negocio,
+  NegociosFormData,
+  TipoNegocioFormData,
+} from "@/types/types";
 import { motion } from "motion/react";
-import { FormClientesModal } from "@/app/components/form-clientes-modal";
+import { FormNegociosModal } from "@/app/components/form-negocios-modal";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import {
-  createClient,
-  deleteClient,
-  getClients,
-  updateClient,
+  createNegocio,
+  createTipoNegocio,
+  deleteNegocio,
+  getUsuarioNegocio,
+  updateNegocio,
 } from "@/lib/api";
 import { useUser } from "./UserContext";
 import { DeleteModal } from "./delete-modal";
@@ -32,12 +40,14 @@ import toast from "react-hot-toast";
 import { useQueryClient } from "@tanstack/react-query";
 import { ModalTable } from "./ModalTable";
 import { Column } from "./DataTable";
-export default function CardsClientesActions({
+import { FormModalTipoNegocio } from "./form-tipo-negocio";
+export default function CardsNegociosActions({
   title,
   description,
   actions,
 }: AnonymousAction) {
   const [isFormModalOpen, setIsFormModalOpen] = React.useState(false);
+  const [isTiposModalOpen, setIsTiposModalOpen] = React.useState(false);
   const [modalMode, setModalMode] = React.useState<"create" | "update">(
     "create"
   );
@@ -45,12 +55,13 @@ export default function CardsClientesActions({
   const queryClient = useQueryClient();
   const { session } = useUser();
   const [isAllOpen, setIsAllOpen] = React.useState(false);
-  const [queryData, setQueryData] = React.useState<Client[]>([]);
+  const [queryData, setQueryData] = React.useState<Negocio[]>([]);
   const [searchValue, setSearchValue] = React.useState("");
-  const [selectedItems, setSelectedItems] = React.useState<Client[]>([]);
+  const [selectedItems, setSelectedItems] = React.useState<Negocio[]>([]);
   const { data, error } = useQuery({
-    queryKey: ["clientes"],
-    queryFn: () => getClients(session?.accessToken || ""),
+    queryKey: ["negocios"],
+    queryFn: () =>
+      getUsuarioNegocio(session?.accessToken || "", session?.user.id || 0),
   });
 
   React.useEffect(() => {
@@ -62,29 +73,29 @@ export default function CardsClientesActions({
   React.useEffect(() => {
     if (error as AxiosError) {
       if ((error as AxiosError).response?.status === 401) {
-        toast.error("Session expired, please login again.");
+        toast.error("Sesión expirada, por favor inicia sesión nuevamente.");
       }
     }
   }, [error]);
 
-  const createClientMutation = useMutation({
-    mutationFn: (data: ClientFormData) =>
-      createClient(data, session?.accessToken || ""),
+  const createNegocioMutation = useMutation({
+    mutationFn: (data: NegociosFormData) =>
+      createNegocio(data, session?.accessToken || ""),
     onSuccess: () => {
       setIsFormModalOpen(false);
       queryClient.invalidateQueries({
-        queryKey: ["clientes"],
+        queryKey: ["negocios"],
       });
-      toast.success("Client created successfully");
+      toast.success("Negocio creado exitosamente");
     },
     onError: (error: AxiosError) => {
       returnErrorMessage(error);
     },
   });
 
-  const updateClientMutation = useMutation({
-    mutationFn: (data: Client) =>
-      updateClient(
+  const updateNegocioMutation = useMutation({
+    mutationFn: (data: Negocio) =>
+      updateNegocio(
         {
           ...data,
         },
@@ -93,27 +104,27 @@ export default function CardsClientesActions({
     onSuccess: () => {
       setIsFormModalOpen(false);
       queryClient.invalidateQueries({
-        queryKey: ["clientes"],
+        queryKey: ["negocios"],
       });
-      toast.success("Client updated successfully");
+      toast.success("Negocio actualizado exitosamente");
     },
     onError: (error: AxiosError) => {
-      console.error("Error creating client:", error);
+      console.error("Error al actualizar negocio:", error);
       returnErrorMessage(error);
     },
   });
 
-  const deleteClientMutation = useMutation({
-    mutationFn: (id: string) => deleteClient(id, session?.accessToken || ""),
+  const deleteNegocioMutation = useMutation({
+    mutationFn: (id: string) => deleteNegocio(id, session?.accessToken || ""),
     onSuccess: () => {
       setIsDeleteModalOpen(false);
       queryClient.invalidateQueries({
-        queryKey: ["clientes"],
+        queryKey: ["negocios"],
       });
-      toast.success("Client deleted successfully");
+      toast.success("Negocio eliminado exitosamente");
     },
     onError: (error: AxiosError) => {
-      console.error("Error deleting client:", error);
+      console.error("Error al eliminar negocio:", error);
       returnErrorMessage(error);
     },
   });
@@ -129,8 +140,11 @@ export default function CardsClientesActions({
         setIsFormModalOpen(true);
         break;
       case "delete":
-        //some delete logic here
         setIsDeleteModalOpen(true);
+        break;
+      case "create-type":
+        setModalMode("create");
+        setIsTiposModalOpen(true);
         break;
       case "view":
         setIsAllOpen(true);
@@ -140,21 +154,54 @@ export default function CardsClientesActions({
 
   const handleDelete = async (id: string) => {
     setIsDeleteModalOpen(false);
-    deleteClientMutation.mutate(id);
+    deleteNegocioMutation.mutate(id);
   };
 
   async function handleFormSubmit(
-    data: ClientFormData,
+    data: NegociosFormData,
     id?: string | undefined
   ) {
     if (modalMode === "create") {
-      createClientMutation.mutate(data);
+      console.log("Creating negocio with data:", data);
+
+      createNegocioMutation.mutate(data);
     }
     if (modalMode === "update") {
-      updateClientMutation.mutate({
+      updateNegocioMutation.mutate({
         ...data,
         id: id || "",
       });
+      console.log("Updating negocio with data:", data, "and id:", id);
+    }
+  }
+
+  const createTiposMutation = useMutation({
+    mutationFn: (data: TipoNegocioFormData) =>
+      createTipoNegocio(data, session?.accessToken || ""),
+    onSuccess: () => {
+      setIsTiposModalOpen(false);
+      queryClient.invalidateQueries({
+        queryKey: ["tiposNegocio"],
+      });
+      toast.success("Tipo de negocio creado exitosamente");
+    },
+    onError: (error: AxiosError) => {
+      returnErrorMessage(error);
+    },
+  });
+
+  async function handleTiposFormSubmit(
+    data: TipoNegocioFormData, // Replace with actual type if available
+    id?: string | undefined
+  ) {
+    if (modalMode === "create") {
+      console.log("Creating tipo negocio with data:", data);
+      // Call the create function here
+      createTiposMutation.mutate(data);
+    }
+    if (modalMode === "update") {
+      console.log("Updating tipo negocio with data:", data, "and id:", id);
+      // Call the update function here
     }
   }
 
@@ -162,43 +209,32 @@ export default function CardsClientesActions({
     if (searchValue) {
       return queryData.filter(
         (item) =>
-          item.nombreCliente
+          item.nombreNegocio
             .toLowerCase()
             .includes(searchValue.toLowerCase()) ||
-          item.apellidoCliente
-            .toLowerCase()
-            .includes(searchValue.toLowerCase()) ||
-          item.correo.toLowerCase().includes(searchValue.toLowerCase()) ||
+          item.direccion.toLowerCase().includes(searchValue.toLowerCase()) ||
           item.telefono.toLowerCase().includes(searchValue.toLowerCase()) ||
-          item.direccion.toLowerCase().includes(searchValue.toLowerCase())
+          item.correo.toLowerCase().includes(searchValue.toLowerCase())
       );
     }
     return queryData;
   }, [queryData, searchValue]);
 
-  const clientColumns: Column<Client>[] = [
+  const negocioColumns: Column<Negocio>[] = [
     {
-      key: "nombreCliente",
-      label: "Nombre",
-      render: (client) => (
-        <div className="font-medium">{client.nombreCliente}</div>
-      ),
-      sortable: true,
-    },
-    {
-      key: "apellidoCliente",
-      label: "Apellido",
-      render: (client) => (
-        <div className="font-medium">{client.apellidoCliente}</div>
+      key: "nombreNegocio",
+      label: "Nombre del Negocio",
+      render: (negocio) => (
+        <div className="font-medium">{negocio.nombreNegocio}</div>
       ),
       sortable: true,
     },
     {
       key: "correo",
       label: "Correo Electrónico",
-      render: (client) => (
+      render: (negocio) => (
         <div className="text-sm text-muted-foreground line-clamp-1">
-          {client.correo}
+          {negocio.correo}
         </div>
       ),
       sortable: true,
@@ -206,17 +242,17 @@ export default function CardsClientesActions({
     {
       key: "telefono",
       label: "Teléfono",
-      render: (client) => (
-        <span className="font-medium">{client.telefono}</span>
+      render: (negocio) => (
+        <span className="font-medium">{negocio.telefono}</span>
       ),
       sortable: true,
     },
     {
       key: "direccion",
       label: "Dirección",
-      render: (client) => (
+      render: (negocio) => (
         <div className="text-sm text-muted-foreground line-clamp-1">
-          {client.direccion}
+          {negocio.direccion}
         </div>
       ),
       sortable: false,
@@ -291,27 +327,35 @@ export default function CardsClientesActions({
           ))}
         </motion.div>
       </CardContent>
-      <FormClientesModal
+      <FormNegociosModal
         isOpen={isFormModalOpen}
         onClose={() => setIsFormModalOpen(false)}
         mode={modalMode}
         onSubmit={handleFormSubmit}
       />
+
+      <FormModalTipoNegocio
+        isOpen={isTiposModalOpen}
+        onClose={() => setIsTiposModalOpen(false)}
+        mode={modalMode}
+        onSubmit={handleTiposFormSubmit}
+      />
+
       <DeleteModal
         isOpen={isDeleteModalOpen}
         onClose={() => setIsDeleteModalOpen(false)}
-        section="clientes"
+        section="negocios"
         onDelete={handleDelete}
       />
 
       <ModalTable
         isOpen={isAllOpen}
         onClose={() => setIsAllOpen(false)}
-        section="clientes"
+        section="negocios"
         searchValue={searchValue}
         onSearchChange={setSearchValue}
         filteredData={filteredData}
-        columns={clientColumns}
+        columns={negocioColumns}
         selectedItems={selectedItems}
         onSelectionChange={setSelectedItems}
       />
