@@ -1,0 +1,290 @@
+[33mcommit 91c8c1ae35e20cd7720ea292f9a01f270db075ab[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m)[m
+Author: GabJS10 <jgabis65@gmail.com>
+Date:   Sun Aug 3 16:03:36 2025 -0500
+
+    v2.0
+
+ backend_sistema.zip | Bin [31m78012654[m -> [32m0[m bytes
+ front-end.zip       | Bin [31m334393243[m -> [32m0[m bytes
+ 2 files changed, 0 insertions(+), 0 deletions(-)
+
+[33mcommit 37cab82e6d8d73e7d133af5e90edbcaa0df12912[m
+Author: GabJS10 <jgabis65@gmail.com>
+Date:   Sun Aug 3 15:41:59 2025 -0500
+
+    Add facturacion and excel download
+
+ backend_sistema.zip                                | Bin [31m0[m -> [32m78012654[m bytes
+ .../0003_alter_usuarionegocio_unique_together.py   |  19 [32m+++[m
+ .../productos/__pycache__/models.cpython-312.pyc   | Bin [31m3193[m -> [32m4545[m bytes
+ .../productos/__pycache__/urls.cpython-312.pyc     | Bin [31m1362[m -> [32m1507[m bytes
+ .../productos/__pycache__/views.cpython-312.pyc    | Bin [31m10907[m -> [32m14255[m bytes
+ .../migrations/0002_factura_detallefactura.py      |  36 [32m+++++[m
+ backend_sistema/Apps/productos/models.py           |  14 [32m++[m
+ backend_sistema/Apps/productos/urls.py             |   4 [32m+[m[31m-[m
+ backend_sistema/Apps/productos/views.py            |  82 [32m+++++++++[m[31m-[m
+ front-end.zip                                      | Bin [31m0[m -> [32m334393243[m bytes
+ front-end/package-lock.json                        | 174 [32m++++++++++++++++++++[m[31m-[m
+ front-end/package.json                             |   4 [32m+[m
+ front-end/src/app/components/DataTable.tsx         |   3 [32m+[m[31m-[m
+ front-end/src/app/components/ExcelExportes.tsx     |  73 [32m+++++++++[m
+ .../src/app/components/FacturaClienteSelector.tsx  | 136 [32m++++++++++++++++[m
+ front-end/src/app/components/FacturaForm.tsx       |  59 [32m+++++++[m
+ front-end/src/app/components/FacturaProductos.tsx  | 149 [32m++++++++++++++++++[m
+ front-end/src/app/components/InvoicesSidebar.tsx   |  65 [32m++++++++[m
+ front-end/src/app/components/ModalTable.tsx        |   1 [32m+[m
+ front-end/src/app/components/dashboard-header.tsx  |  22 [32m++[m[31m-[m
+ .../src/app/components/data-search-filter.tsx      |   5 [32m+[m
+ .../src/app/dashboard/invoices/create/page.tsx     |  18 [32m+++[m
+ front-end/src/app/dashboard/invoices/layout.tsx    |  16 [32m++[m
+ front-end/src/app/dashboard/productos/page.tsx     |   1 [32m+[m
+ front-end/src/hooks/generarFactura.tsx             | 105 [32m+++++++++++++[m
+ front-end/src/hooks/useFactura.tsx                 |  25 [32m+++[m
+ front-end/src/lib/api.ts                           |  18 [32m+++[m
+ front-end/src/types/types.ts                       |  16 [32m++[m
+ 28 files changed, 1032 insertions(+), 13 deletions(-)
+
+[33mcommit f9f060bd50de185ba21feaae668b9a7a51fda3a1[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m
+Author: GabJS10 <jgabis65@gmail.com>
+Date:   Wed Jul 30 17:24:18 2025 -0500
+
+    Add frontend negocios,clientes,proveedores
+
+ .../negocios/__pycache__/models.cpython-312.pyc    | Bin [31m2392[m -> [32m2430[m bytes
+ .../Apps/negocios/__pycache__/urls.cpython-312.pyc | Bin [31m925[m -> [32m944[m bytes
+ .../negocios/__pycache__/views.cpython-312.pyc     | Bin [31m9780[m -> [32m11009[m bytes
+ backend_sistema/Apps/negocios/models.py            |   1 [32m+[m
+ backend_sistema/Apps/negocios/serializers.py       |   3 [32m+[m
+ backend_sistema/Apps/negocios/urls.py              |   4 [32m+[m[31m-[m
+ backend_sistema/Apps/negocios/views.py             |  42 [32m++[m[31m-[m
+ .../proveedores/__pycache__/models.cpython-312.pyc | Bin [31m1299[m -> [32m1499[m bytes
+ .../proveedores/__pycache__/urls.cpython-312.pyc   | Bin [31m713[m -> [32m739[m bytes
+ .../proveedores/__pycache__/views.cpython-312.pyc  | Bin [31m6693[m -> [32m7279[m bytes
+ ...0002_alter_proveedorproducto_unique_together.py |  18 [32m+[m
+ backend_sistema/Apps/proveedores/models.py         |   5 [32m+[m[31m-[m
+ backend_sistema/Apps/proveedores/urls.py           |   5 [32m+[m[31m-[m
+ backend_sistema/Apps/proveedores/views.py          |  34 [32m+[m[31m-[m
+ front-end/package-lock.json                        |   8 [32m+[m[31m-[m
+ front-end/package.json                             |   2 [32m+[m[31m-[m
+ front-end/src/app/auth/register/page.tsx           |   2 [32m+[m[31m-[m
+ .../src/app/components/DashboardWindowProvider.tsx |   8 [32m+[m[31m-[m
+ front-end/src/app/components/DataTable.tsx         |   2 [32m+[m[31m-[m
+ front-end/src/app/components/ModalTable.tsx        |  20 [32m+[m[31m-[m
+ .../src/app/components/SelectMultipleModal.tsx     | 199 [32m++++++++++[m
+ .../src/app/components/card-clientes-actions.tsx   | 104 [32m+++++[m[31m-[m
+ .../src/app/components/card-negocios-actions.tsx   | 364 [32m+++++++++++++++++++[m
+ .../app/components/card-proveedores-actions.tsx    | 401 [32m++++++++++++++++++++[m
+ front-end/src/app/components/dashboard-sidebar.tsx |  54 [32m++[m[31m-[m
+ front-end/src/app/components/dashboard-tipos.tsx   |   2 [32m+[m
+ .../src/app/components/data-search-filter.tsx      |  74 [32m++[m[31m--[m
+ front-end/src/app/components/delete-modal.tsx      | 211 [32m++++++++++[m[31m-[m
+ .../src/app/components/form-negocios-modal.tsx     | 403 [32m+++++++++++++++++++++[m
+ .../src/app/components/form-proveedores.modal.tsx  | 308 [32m++++++++++++++++[m
+ front-end/src/app/components/form-tipo-negocio.tsx | 268 [32m++++++++++++++[m
+ front-end/src/app/components/form-tipos-modal.tsx  |  13 [32m+[m[31m-[m
+ front-end/src/app/dashboard/negocios/layout.tsx    |  16 [32m+[m
+ front-end/src/app/dashboard/negocios/page.tsx      |  65 [32m++++[m
+ front-end/src/app/dashboard/productos/page.tsx     |   2 [31m-[m
+ front-end/src/app/dashboard/proveedores/layout.tsx |  16 [32m+[m
+ front-end/src/app/dashboard/proveedores/page.tsx   |  71 [32m++++[m
+ front-end/src/app/page.tsx                         |  57 [32m+[m[31m--[m
+ front-end/src/lib/api.ts                           | 221 [32m+++++++++++[m
+ front-end/src/lib/constants.ts                     | 174 [32m++++++++[m[31m-[m
+ front-end/src/types/types.ts                       | 157 [32m++++++++[m
+ 41 files changed, 3211 insertions(+), 123 deletions(-)
+
+[33mcommit f4283ac6fd43ee1e05700c0c47b77a4251314ffb[m
+Author: GabJS10 <jgabis65@gmail.com>
+Date:   Fri Jul 25 18:08:57 2025 -0500
+
+    Add backend resources and incomplete Client CRUD Frontend
+
+ .../__pycache__/__init__.cpython-312.pyc           | Bin [31m194[m -> [32m196[m bytes
+ .../__pycache__/admin.cpython-312.pyc              | Bin [31m741[m -> [32m743[m bytes
+ .../autenticacion/__pycache__/apps.cpython-312.pyc | Bin [31m519[m -> [32m521[m bytes
+ .../__pycache__/models.cpython-312.pyc             | Bin [31m4656[m -> [32m4658[m bytes
+ .../__pycache__/serializers.cpython-312.pyc        | Bin [31m5609[m -> [32m5595[m bytes
+ .../autenticacion/__pycache__/urls.cpython-312.pyc | Bin [31m1495[m -> [32m1322[m bytes
+ .../__pycache__/views.cpython-312.pyc              | Bin [31m4042[m -> [32m3324[m bytes
+ .../__pycache__/0001_initial.cpython-312.pyc       | Bin [31m3056[m -> [32m3058[m bytes
+ .../__pycache__/__init__.cpython-312.pyc           | Bin [31m205[m -> [32m207[m bytes
+ backend_sistema/Apps/autenticacion/urls.py         |   4 [32m+[m[31m-[m
+ backend_sistema/Apps/autenticacion/views.py        |   9 [31m-[m
+ .../Apps/caja/__pycache__/__init__.cpython-312.pyc | Bin [31m185[m -> [32m187[m bytes
+ .../Apps/caja/__pycache__/admin.cpython-312.pyc    | Bin [31m229[m -> [32m231[m bytes
+ .../Apps/caja/__pycache__/apps.cpython-312.pyc     | Bin [31m492[m -> [32m494[m bytes
+ .../Apps/caja/__pycache__/models.cpython-312.pyc   | Bin [31m1104[m -> [32m1106[m bytes
+ .../__pycache__/0001_initial.cpython-312.pyc       | Bin [31m1646[m -> [32m1648[m bytes
+ .../__pycache__/__init__.cpython-312.pyc           | Bin [31m196[m -> [32m198[m bytes
+ .../clientes/__pycache__/__init__.cpython-312.pyc  | Bin [31m189[m -> [32m191[m bytes
+ .../clientes/__pycache__/admin.cpython-312.pyc     | Bin [31m233[m -> [32m235[m bytes
+ .../Apps/clientes/__pycache__/apps.cpython-312.pyc | Bin [31m504[m -> [32m506[m bytes
+ .../clientes/__pycache__/models.cpython-312.pyc    | Bin [31m815[m -> [32m817[m bytes
+ .../__pycache__/0001_initial.cpython-312.pyc       | Bin [31m1209[m -> [32m1211[m bytes
+ .../__pycache__/__init__.cpython-312.pyc           | Bin [31m200[m -> [32m202[m bytes
+ backend_sistema/Apps/clientes/serializers.py       |   8 [32m+[m
+ backend_sistema/Apps/clientes/urls.py              |   7 [32m+[m
+ backend_sistema/Apps/clientes/views.py             |  57 [32m+++[m[31m-[m
+ .../empleados/__pycache__/__init__.cpython-312.pyc | Bin [31m190[m -> [32m192[m bytes
+ .../empleados/__pycache__/admin.cpython-312.pyc    | Bin [31m234[m -> [32m236[m bytes
+ .../empleados/__pycache__/apps.cpython-312.pyc     | Bin [31m507[m -> [32m509[m bytes
+ .../empleados/__pycache__/models.cpython-312.pyc   | Bin [31m726[m -> [32m728[m bytes
+ .../__pycache__/0001_initial.cpython-312.pyc       | Bin [31m1106[m -> [32m1108[m bytes
+ .../__pycache__/__init__.cpython-312.pyc           | Bin [31m201[m -> [32m203[m bytes
+ .../gastos/__pycache__/__init__.cpython-312.pyc    | Bin [31m187[m -> [32m189[m bytes
+ .../Apps/gastos/__pycache__/admin.cpython-312.pyc  | Bin [31m231[m -> [32m233[m bytes
+ .../Apps/gastos/__pycache__/apps.cpython-312.pyc   | Bin [31m498[m -> [32m500[m bytes
+ .../Apps/gastos/__pycache__/models.cpython-312.pyc | Bin [31m911[m -> [32m913[m bytes
+ .../__pycache__/0001_initial.cpython-312.pyc       | Bin [31m1440[m -> [32m1442[m bytes
+ .../__pycache__/__init__.cpython-312.pyc           | Bin [31m198[m -> [32m200[m bytes
+ .../__pycache__/__init__.cpython-312.pyc           | Bin [31m192[m -> [32m194[m bytes
+ .../movimientos/__pycache__/admin.cpython-312.pyc  | Bin [31m236[m -> [32m238[m bytes
+ .../movimientos/__pycache__/apps.cpython-312.pyc   | Bin [31m513[m -> [32m515[m bytes
+ .../movimientos/__pycache__/models.cpython-312.pyc | Bin [31m233[m -> [32m235[m bytes
+ .../__pycache__/__init__.cpython-312.pyc           | Bin [31m203[m -> [32m205[m bytes
+ .../negocios/__pycache__/__init__.cpython-312.pyc  | Bin [31m189[m -> [32m191[m bytes
+ .../negocios/__pycache__/admin.cpython-312.pyc     | Bin [31m233[m -> [32m235[m bytes
+ .../Apps/negocios/__pycache__/apps.cpython-312.pyc | Bin [31m504[m -> [32m506[m bytes
+ .../negocios/__pycache__/models.cpython-312.pyc    | Bin [31m2390[m -> [32m2392[m bytes
+ .../Apps/negocios/__pycache__/urls.cpython-312.pyc | Bin [31m341[m -> [32m925[m bytes
+ .../negocios/__pycache__/views.cpython-312.pyc     | Bin [31m472[m -> [32m9780[m bytes
+ .../__pycache__/0001_initial.cpython-312.pyc       | Bin [31m1955[m -> [32m1957[m bytes
+ .../0002_usuarionegocio.cpython-312.pyc            | Bin [31m1425[m -> [32m1427[m bytes
+ .../__pycache__/__init__.cpython-312.pyc           | Bin [31m200[m -> [32m202[m bytes
+ backend_sistema/Apps/negocios/models.py            |   2 [32m+[m[31m-[m
+ backend_sistema/Apps/negocios/serializers.py       |  18 [32m+[m
+ backend_sistema/Apps/negocios/urls.py              |  17 [32m+[m[31m-[m
+ backend_sistema/Apps/negocios/views.py             | 156 [32m++++++++[m[31m-[m
+ .../productos/__pycache__/__init__.cpython-312.pyc | Bin [31m190[m -> [32m192[m bytes
+ .../productos/__pycache__/admin.cpython-312.pyc    | Bin [31m566[m -> [32m568[m bytes
+ .../productos/__pycache__/apps.cpython-312.pyc     | Bin [31m507[m -> [32m509[m bytes
+ .../productos/__pycache__/models.cpython-312.pyc   | Bin [31m3207[m -> [32m3193[m bytes
+ .../__pycache__/serializers.cpython-312.pyc        | Bin [31m1550[m -> [32m1536[m bytes
+ .../productos/__pycache__/urls.cpython-312.pyc     | Bin [31m1376[m -> [32m1362[m bytes
+ .../productos/__pycache__/views.cpython-312.pyc    | Bin [31m11573[m -> [32m10907[m bytes
+ .../__pycache__/0001_initial.cpython-312.pyc       | Bin [31m3189[m -> [32m3191[m bytes
+ .../__pycache__/__init__.cpython-312.pyc           | Bin [31m201[m -> [32m203[m bytes
+ backend_sistema/Apps/productos/views.py            |  10 [32m+[m[31m-[m
+ .../__pycache__/__init__.cpython-312.pyc           | Bin [31m192[m -> [32m194[m bytes
+ .../proveedores/__pycache__/admin.cpython-312.pyc  | Bin [31m236[m -> [32m238[m bytes
+ .../proveedores/__pycache__/apps.cpython-312.pyc   | Bin [31m513[m -> [32m515[m bytes
+ .../proveedores/__pycache__/models.cpython-312.pyc | Bin [31m1297[m -> [32m1299[m bytes
+ .../proveedores/__pycache__/urls.cpython-312.pyc   | Bin [31m344[m -> [32m713[m bytes
+ .../proveedores/__pycache__/views.cpython-312.pyc  | Bin [31m478[m -> [32m6693[m bytes
+ .../__pycache__/0001_initial.cpython-312.pyc       | Bin [31m1908[m -> [32m1910[m bytes
+ .../__pycache__/__init__.cpython-312.pyc           | Bin [31m203[m -> [32m205[m bytes
+ backend_sistema/Apps/proveedores/serializers.py    |  13 [32m+[m
+ backend_sistema/Apps/proveedores/urls.py           |  10 [32m+[m[31m-[m
+ backend_sistema/Apps/proveedores/views.py          | 111 [32m++++++[m[31m-[m
+ .../ventas/__pycache__/__init__.cpython-312.pyc    | Bin [31m187[m -> [32m189[m bytes
+ .../Apps/ventas/__pycache__/admin.cpython-312.pyc  | Bin [31m231[m -> [32m233[m bytes
+ .../Apps/ventas/__pycache__/apps.cpython-312.pyc   | Bin [31m498[m -> [32m500[m bytes
+ .../Apps/ventas/__pycache__/models.cpython-312.pyc | Bin [31m1445[m -> [32m1447[m bytes
+ .../Apps/ventas/__pycache__/urls.cpython-312.pyc   | Bin [31m250[m -> [32m252[m bytes
+ .../__pycache__/0001_initial.cpython-312.pyc       | Bin [31m2005[m -> [32m2007[m bytes
+ .../__pycache__/__init__.cpython-312.pyc           | Bin [31m198[m -> [32m200[m bytes
+ .../__pycache__/__init__.cpython-312.pyc           | Bin [31m191[m -> [32m193[m bytes
+ .../__pycache__/settings.cpython-312.pyc           | Bin [31m3585[m -> [32m3567[m bytes
+ .../__pycache__/urls.cpython-312.pyc               | Bin [31m1474[m -> [32m1551[m bytes
+ .../__pycache__/wsgi.cpython-312.pyc               | Bin [31m695[m -> [32m697[m bytes
+ backend_sistema/backend_sistema/settings.py        |   2 [32m+[m[31m-[m
+ backend_sistema/backend_sistema/urls.py            |   2 [32m+[m[31m-[m
+ backend_sistema/requirements.txt                   | Bin [31m438[m -> [32m398[m bytes
+ front-end/package-lock.json                        |  33 [32m+[m[31m-[m
+ front-end/src/app/components/DataTable.tsx         | 185 [32m+++++++++++[m
+ front-end/src/app/components/ModalTable.tsx        |  56 [32m++++[m
+ .../src/app/components/card-clientes-actions.tsx   | 220 [32m++++++++++++[m
+ ...ards-actions.tsx => cards-products-actions.tsx} |   2 [32m+[m[31m-[m
+ .../src/app/components/dashboard-categorias.tsx    |   2 [32m+[m[31m-[m
+ .../src/app/components/dashboard-products.tsx      |   4 [32m+[m[31m-[m
+ front-end/src/app/components/dashboard-sidebar.tsx |  20 [32m+[m[31m-[m
+ front-end/src/app/components/dashboard-tipos.tsx   |   2 [32m+[m[31m-[m
+ .../{data-table.tsx => data-table-product.tsx}     |   9 [32m+[m[31m-[m
+ front-end/src/app/components/delete-modal.tsx      | 102 [32m+++++[m[31m-[m
+ .../src/app/components/form-clientes-modal.tsx     | 369 [32m+++++++++++++++++++++[m
+ .../src/app/components/form-product-modal.tsx      |  32 [32m+[m[31m-[m
+ .../src/app/components/ui/card.tsx                 |   0
+ front-end/src/app/components/ui/checkbox.tsx       |   0
+ front-end/src/app/components/ui/table.tsx          |   0
+ front-end/src/app/dashboard/clientes/layout.tsx    |  16 [32m+[m
+ front-end/src/app/dashboard/clientes/page.tsx      |  65 [32m++++[m
+ front-end/src/app/dashboard/layout.tsx             |   2 [32m+[m
+ front-end/src/app/dashboard/productos/page.tsx     |   9 [32m+[m[31m-[m
+ front-end/src/lib/api.ts                           | 306 [32m+++++++++++[m[31m------[m
+ front-end/src/lib/authOptions.ts                   | 132 [32m++++[m[31m----[m
+ front-end/src/lib/constants.ts                     | 197 [32m++++++++[m[31m---[m
+ front-end/src/types/types.ts                       | 204 [32m++++++++[m[31m----[m
+ 115 files changed, 2014 insertions(+), 379 deletions(-)
+
+[33mcommit 315a7ce45b8ab040a51b44d7b339088586a35c6e[m
+Author: GabJS10 <jgabis65@gmail.com>
+Date:   Wed Jul 9 17:38:14 2025 -0500
+
+    V1.0
+
+ .../__pycache__/serializers.cpython-312.pyc        | Bin [31m4716[m -> [32m5609[m bytes
+ .../autenticacion/__pycache__/urls.cpython-312.pyc | Bin [31m1438[m -> [32m1495[m bytes
+ .../__pycache__/views.cpython-312.pyc              | Bin [31m3504[m -> [32m4042[m bytes
+ .../autenticacion/management/commands/__init__.py  |   0
+ .../Apps/autenticacion/management/commands/seed.py |  17 [32m+[m
+ backend_sistema/Apps/autenticacion/permissions.py  |   1 [31m-[m
+ backend_sistema/Apps/autenticacion/serializers.py  |  15 [32m+[m
+ backend_sistema/Apps/autenticacion/urls.py         |   5 [32m+[m[31m-[m
+ backend_sistema/Apps/autenticacion/views.py        |  13 [32m+[m[31m-[m
+ .../productos/__pycache__/models.cpython-312.pyc   | Bin [31m3191[m -> [32m3207[m bytes
+ .../__pycache__/serializers.cpython-312.pyc        | Bin [31m1534[m -> [32m1550[m bytes
+ .../productos/__pycache__/urls.cpython-312.pyc     | Bin [31m784[m -> [32m1376[m bytes
+ .../productos/__pycache__/views.cpython-312.pyc    | Bin [31m1530[m -> [32m11573[m bytes
+ backend_sistema/Apps/productos/models.py           |   2 [32m+[m[31m-[m
+ backend_sistema/Apps/productos/serializers.py      |   1 [31m-[m
+ backend_sistema/Apps/productos/urls.py             |   9 [32m+[m[31m-[m
+ backend_sistema/Apps/productos/views.py            | 205 [32m++++[m[31m-[m
+ .../__pycache__/settings.cpython-312.pyc           | Bin [31m3585[m -> [32m3585[m bytes
+ front-end/package-lock.json                        | 408 [32m+++++++++[m[31m-[m
+ front-end/package.json                             |   9 [32m+[m[31m-[m
+ front-end/public/icono.png                         | Bin [31m0[m -> [32m5366[m bytes
+ front-end/src/app/api/auth/[...nextauth]/route.ts  |  65 [32m+[m[31m-[m
+ front-end/src/app/auth/login/page.tsx              |   8 [32m+[m[31m-[m
+ .../src/app/components/DashboardWindowProvider.tsx |  26 [32m+[m
+ .../src/app/components/QueryClientProvider.tsx     |  15 [32m+[m
+ front-end/src/app/components/SessionGuard.tsx      |  19 [32m+[m
+ front-end/src/app/components/UserContext.tsx       |  29 [32m+[m
+ front-end/src/app/components/cards-actions.tsx     | 487 [32m+++++++++++[m
+ .../src/app/components/dashboard-categorias.tsx    |  14 [32m+[m
+ front-end/src/app/components/dashboard-header.tsx  |  85 [32m++[m
+ .../src/app/components/dashboard-products.tsx      |  64 [32m++[m
+ front-end/src/app/components/dashboard-sidebar.tsx |  70 [32m++[m
+ front-end/src/app/components/dashboard-tipos.tsx   |  14 [32m+[m
+ .../src/app/components/data-search-filter.tsx      | 163 [32m++++[m
+ front-end/src/app/components/data-table.tsx        | 190 [32m+++++[m
+ front-end/src/app/components/delete-modal.tsx      | 376 [32m+++++++++[m
+ .../src/app/components/form-categorias-modal.tsx   | 281 [32m+++++++[m
+ .../src/app/components/form-product-modal.tsx      | 567 [32m+++++++++++++[m
+ front-end/src/app/components/form-tipos-modal.tsx  | 272 [32m+++++++[m
+ front-end/src/app/components/page-header.tsx       |  71 [32m++[m
+ front-end/src/app/components/toggleThemeButton.tsx |  40 [32m+[m
+ front-end/src/app/components/ui/form-modal.tsx     | 179 [32m+++++[m
+ front-end/src/app/dashboard/home/layout.tsx        |  15 [32m+[m
+ front-end/src/app/dashboard/home/page.tsx          |  18 [32m+[m
+ front-end/src/app/dashboard/layout.tsx             |  23 [32m+[m[31m-[m
+ front-end/src/app/dashboard/page.tsx               |   9 [31m-[m
+ front-end/src/app/dashboard/productos/layout.tsx   |  11 [32m+[m
+ front-end/src/app/dashboard/productos/page.tsx     | 254 [32m++++++[m
+ front-end/src/app/layout.tsx                       |  46 [32m+[m[31m-[m
+ front-end/src/app/page.tsx                         | 895 [32m++++++++++++++++++[m[31m---[m
+ front-end/src/components/ui/avatar.tsx             |  53 [32m++[m
+ front-end/src/components/ui/badge.tsx              |  46 [32m++[m
+ front-end/src/components/ui/checkbox.tsx           |  32 [32m+[m
+ front-end/src/components/ui/dropdown-menu.tsx      | 257 [32m++++++[m
+ front-end/src/components/ui/form.tsx               |  83 [32m+[m[31m-[m
+ front-end/src/components/ui/select.tsx             | 185 [32m+++++[m
+ front-end/src/components/ui/separator.tsx          |  28 [32m+[m
+ front-end/src/components/ui/table.tsx              | 116 [32m+++[m
+ front-end/src/components/ui/textarea.tsx           |  18 [32m+[m
+ front-end/src/lib/api.ts                           | 184 [32m+++++[m
+ front-end/src/lib/authOptions.ts                   |  84 [32m++[m
+ front-end/src/lib/constants.ts                     | 271 [32m+++++++[m
+ front-end/src/lib/mutations.ts                     |   0
+ front-end/src/types/next-auth.d.ts                 |  15 [32m+[m
+ front-end/src/types/types.ts                       | 114 [32m+++[m
+ 65 files changed, 6203 insertions(+), 274 deletions(-)
