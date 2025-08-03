@@ -8,8 +8,26 @@ import {
   Proveedor,
   Negocio,
   TipoNegocio,
+  FacturaFormData,
 } from "@/types/types";
 const BACKEND_URL = process.env.BACKEND_URL || "http://localhost:8000/";
+
+export async function crearFactura(
+  FacturaFormData: FacturaFormData,
+  token: string
+) {
+  const response = await axios.post(
+    `${BACKEND_URL}productos/api/factura/`,
+    FacturaFormData,
+    {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+  return response.data;
+}
 
 export async function getProducts(token: string): Promise<Product[]> {
   const response = await axios.get(`${BACKEND_URL}productos/api/producto/`, {

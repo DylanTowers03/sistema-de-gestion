@@ -219,6 +219,7 @@ export default function ProductosPage() {
           onClearFilters={handleClearFilters}
           showAdvancedFilters={showFilters}
           onToggleAdvancedFilters={() => setShowFilters(!showFilters)}
+          selectedItems={selectedItems}
         />
 
         {selectedItems.length > 0 && (

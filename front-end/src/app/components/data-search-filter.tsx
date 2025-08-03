@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/select";
 import { Card, CardContent } from "@/components/ui/card";
 import { Search, X, SlidersHorizontal } from "lucide-react";
+import { ExcelExporter } from "./ExcelExportes";
 
 interface FilterOption {
   key: string;
@@ -28,6 +29,7 @@ interface DataSearchFilterProps {
   onClearFilters?: () => void;
   showAdvancedFilters?: boolean;
   onToggleAdvancedFilters?: () => void;
+  selectedItems?: any[];
 }
 
 export function DataSearchFilter({
@@ -39,6 +41,7 @@ export function DataSearchFilter({
   onClearFilters,
   showAdvancedFilters = false,
   onToggleAdvancedFilters,
+  selectedItems,
 }: DataSearchFilterProps) {
   const activeFilterCount = Object.values(activeFilters || {}).filter(
     Boolean
@@ -81,6 +84,8 @@ export function DataSearchFilter({
           )}
         </Button>
 
+        {/* Excel Exporter */}
+        <ExcelExporter data={selectedItems || []} />
         {/* Clear Filters */}
         {activeFilterCount > 0 && (
           <Button variant="ghost" size="sm" onClick={onClearFilters}>

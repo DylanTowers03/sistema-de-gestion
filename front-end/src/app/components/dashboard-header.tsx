@@ -14,14 +14,24 @@ import { Building2, User, Settings, LogOut, Bell } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { ModeToggle } from "./toggleThemeButton";
 import { signOut } from "next-auth/react";
+import { useUser } from "./UserContext";
+import { redirect } from "next/navigation";
 export function DashboardHeader() {
+  const { session } = useUser();
+
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-16 items-center justify-between px-4">
         {/* Logo */}
         <div className="flex items-center space-x-2">
           <Building2 className="h-6 w-6 text-primary" />
-          <span className="font-bold text-xl text-foreground">SISTEMA</span>
+          <span
+            className="font-bold text-xl text-foreground"
+            onClick={() => redirect("/dashboard/home")}
+            style={{ cursor: "pointer" }}
+          >
+            Dashboard
+          </span>
           <Badge variant="secondary" className="ml-2">
             v1.0
           </Badge>
@@ -53,10 +63,10 @@ export function DashboardHeader() {
               <DropdownMenuLabel className="font-normal">
                 <div className="flex flex-col space-y-1">
                   <p className="text-sm font-medium leading-none">
-                    Usuario Admin
+                    Usuario {session?.user?.name || "Admin"}
                   </p>
                   <p className="text-xs leading-none text-muted-foreground">
-                    admin@sisgest.com
+                    {session?.user?.email || "admin@example.com"}
                   </p>
                 </div>
               </DropdownMenuLabel>
@@ -68,6 +78,12 @@ export function DashboardHeader() {
               <DropdownMenuItem>
                 <Settings className="mr-2 h-4 w-4" />
                 <span>Configuración</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => redirect("/dashboard/invoices/create/")}
+              >
+                <Building2 className="mr-2 h-4 w-4" />
+                <span>Facturar</span>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem

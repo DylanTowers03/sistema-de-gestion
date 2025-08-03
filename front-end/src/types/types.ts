@@ -319,6 +319,22 @@ type filterOptions = {
   }[];
 };
 
+export const facturaFormSchema = z.object({
+  clienteId: z.number().min(1, "Selecciona un cliente"),
+  productos: z
+    .array(
+      z.object({
+        productoId: z.string().min(1),
+        cantidad: z
+          .number({ invalid_type_error: "Cantidad inválida" })
+          .min(1, "Debe ser al menos 1"),
+      })
+    )
+    .min(1, "Agrega al menos un producto"),
+});
+
+export type FacturaFormData = z.infer<typeof facturaFormSchema>;
+
 export type {
   DataItem,
   filterOptions,
