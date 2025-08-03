@@ -56,6 +56,7 @@ export function ModalTable<T>({
             onClearFilters={() => {}}
             showAdvancedFilters={false}
             onToggleAdvancedFilters={() => {}}
+            selectedItems={selectedItems}
           />
           <DataTable
             data={filteredData}

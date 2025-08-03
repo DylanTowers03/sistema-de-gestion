@@ -11,6 +11,85 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from  Apps.autenticacion.permissions import IsInRole
 from Apps.autenticacion.models import Rol
+from django.utils.crypto import get_random_string
+from Apps.productos.models import Factura, DetalleFactura
+from Apps.clientes.models import Cliente
+
+class CrearFacturaSimulada(APIView):
+    permission_classes = [IsInRole]
+    required_roles = ["Admin", "Moderador", "Usuario"]
+    
+    def get(self, request):
+        #this method return all the facturas with their details
+        facturas = Factura.objects.all()
+        response_data = []
+        for factura in facturas:
+            detalles = factura.detalles.all()
+            detalles_data = [
+                {
+                    "producto": detalle.producto.nombreProducto,
+                    "cantidad": detalle.cantidad,
+                    "subtotal": str(detalle.subtotal)
+                } for detalle in detalles
+            ]
+            response_data.append({
+                "id": factura.id,
+                "cliente": factura.cliente.nombreCliente,
+                "fecha": factura.fecha,
+                "consecutivo": factura.consecutivo,
+                "total": str(factura.total),
+                "estado": factura.estado,
+                "detalles": detalles_data
+            })
+        return Response(response_data)
+    
+    def post(self, request):
+        data = request.data
+        cliente_id = data['clienteId']
+        items = data['productos']  # [{producto_id, cantidad}]
+
+        cliente = Cliente.objects.get(id=cliente_id)
+        consecutivo = f"SIM-{get_random_string(8)}"
+
+        factura = Factura.objects.create(cliente=cliente, consecutivo=consecutivo)
+
+        total = 0
+        for item in items:
+            producto = Producto.objects.get(id=item['productoId'])
+            cantidad = item['cantidad']
+            subtotal = producto.precioVenta * cantidad
+            total += subtotal
+
+            DetalleFactura.objects.create(
+                factura=factura,
+                producto=producto,
+                cantidad=cantidad,
+                subtotal=subtotal
+            )
+
+        factura.total = total
+        factura.save()
+
+        return Response({
+            "mensaje": "Factura simulada creada",
+            "consecutivo": factura.consecutivo,
+            "total": str(factura.total),
+            "factura": {
+                "id": factura.id,
+                "cliente": cliente.nombreCliente,
+                "fecha": factura.fecha,
+                "consecutivo": factura.consecutivo,
+                "total": str(factura.total),
+                "estado": factura.estado,
+                "detalles": [
+                    {
+                        "producto": detalle.producto.nombreProducto,
+                        "cantidad": detalle.cantidad,
+                        "subtotal": str(detalle.subtotal)
+                    } for detalle in factura.detalles.all()
+                ]
+            }    
+        })
 
 class ProductoViewSet(APIView):
     permission_classes = [IsInRole]
@@ -199,3 +278,4 @@ class CategoriaProductoViewSet(APIView):
         categorias_productos = CategoriaProducto.objects.all()
         serializer = CategoriaProductoSerializer(categorias_productos, many=True)
         return Response(serializer.data)
+    

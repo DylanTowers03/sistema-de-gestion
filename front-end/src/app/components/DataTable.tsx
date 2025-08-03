@@ -1,4 +1,3 @@
-// filepath: /home/gabriel/Escritorio/projects/sistema-de-gestion/front-end/src/app/components/data-table.tsx
 "use client";
 
 import type React from "react";
@@ -22,7 +21,7 @@ export interface Column<T> {
   render?: (item: T) => React.ReactNode;
   sortable?: boolean;
   width?: string;
-} 
+}
 
 interface DataTableProps<T> {
   data: T[];
