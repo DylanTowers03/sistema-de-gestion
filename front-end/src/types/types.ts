@@ -227,6 +227,14 @@ type Negocio = {
   tipoNegocioDetails?: TipoNegocio;
 };
 
+type NegocioSuperAdmin = Omit<Negocio, "tipoNegocioDetails" | "tipoNegocio"> & {
+  propietario: Pick<User, "id" | "nombre" | "correo">;
+  tipoNegocio: {
+    id: string;
+    nombre: string;
+  };
+};
+
 type UsuarioNegocio = {
   id: string;
   usuario: Pick<User, "id">;
@@ -392,4 +400,5 @@ export type {
   TipoNegocioFormData,
   Empleado,
   EmpleadoFormData,
+  NegocioSuperAdmin,
 };

@@ -10,6 +10,7 @@ import {
   TipoNegocio,
   FacturaFormData,
   Empleado,
+  NegocioSuperAdmin,
 } from "@/types/types";
 const BACKEND_URL = process.env.BACKEND_URL || "http://localhost:8000/";
 
@@ -556,4 +557,20 @@ export async function createEmpleados(
   );
 
   return response.data;
+}
+
+export async function getSuperAdminNegocios(
+  token: string
+): Promise<NegocioSuperAdmin[]> {
+  const response = await axios.get(
+    `${BACKEND_URL}negocios/api/negocios-super-admin/`,
+    {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+
+  return response.data.negocios;
 }

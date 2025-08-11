@@ -32,6 +32,7 @@ import {
   deleteNegocio,
   getUsuarioNegocio,
   updateNegocio,
+  getSuperAdminNegocios,
 } from "@/lib/api";
 import { useUser } from "./UserContext";
 import { DeleteModal } from "./delete-modal";

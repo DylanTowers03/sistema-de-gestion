@@ -52,12 +52,52 @@ class TipoNegocioViewSet(APIView):
         tipo.delete()
         return Response(status=204)
 
+class TblNegocioSuperAdminViewSet(APIView):
+    permission_classes = [IsInRole]
+    required_roles = ["SuperAdmin"]
+
+    def getNameIdCorreo(self, id):
+            user = Usuario.objects.get(id=id)
+            return {
+                "id": user.id,
+                "nombre": user.nombre,
+                "correo": user.correo
+            }
+
+    def getTipoNombreId(self, id):
+            tipo = TipoNegocio.objects.get(id=id)
+            return {
+                "id": tipo.id,
+                "nombre": tipo.nombreTipoNegocio
+            }
+
+    def get(self, request, pk=None):
+        #getall
+        negocio = TblNegocio.objects.all()
+
+        negocio_data = []
+
+        for n in negocio:
+            negocio_data.append({
+                "id": n.id,
+                "propietario":  self.getNameIdCorreo(n.propietario.id),   
+                "nombreNegocio": n.nombreNegocio,
+                "direccion": n.direccion,
+                "telefono": n.telefono,
+                "correo": n.correo,
+                "tipoNegocio": self.getTipoNombreId(n.tipoNegocio.id) if n.tipoNegocio else None,
+                "fechaCreacion": n.fechaCreacion
+            })
+
+        return Response({"negocios": negocio_data})
+
+    
+
 class TblNegocioViewSet(APIView):
     permission_classes = [IsInRole]
     required_roles = ["Admin","SuperAdmin"]
 
     def get(self, request, pk=None):
-        print("ENNNNNNNNNNNNNNNNNTROOOOOOOOOOOO")
         propietario_id = request.user.id
 
         negocio = TblNegocio.objects.get(

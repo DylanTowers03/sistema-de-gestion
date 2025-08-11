@@ -2,6 +2,7 @@ from django.urls import path
 from .views import (
     TipoNegocioViewSet,
     TblNegocioViewSet,
+TblNegocioSuperAdminViewSet
 )
 
 urlpatterns = [
@@ -10,5 +11,8 @@ urlpatterns = [
 
     path('api/negocios/', TblNegocioViewSet.as_view()),
     path('api/negocios/<int:pk>/', TblNegocioViewSet.as_view()),
+
+    path("api/negocios-super-admin/", TblNegocioSuperAdminViewSet.as_view()),
+    path("api/negocios-super-admin/<int:pk>/", TblNegocioSuperAdminViewSet.as_view()),
 
 ]

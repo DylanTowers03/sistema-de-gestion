@@ -1,12 +1,115 @@
 "use client";
-import CardsNegociosActions from "@/app/components/card-negocios-actions";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { negociosActions, negocioStats } from "@/lib/constants";
+import { negocioStats } from "@/lib/constants";
 import { motion } from "motion/react";
+import { DataSearchFilter } from "@/app/components/data-search-filter";
+import { Column, DataTable } from "@/app/components/DataTable";
+import { useEffect, useMemo, useState } from "react";
+import { NegocioSuperAdmin } from "@/types/types";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { getSuperAdminNegocios } from "@/lib/api";
+import { useUser } from "@/app/components/UserContext";
 
 export default function NegociosPage() {
+  const [searchValue, setSearchValue] = useState("");
+  const [selectedItems, setSelectedItems] = useState<NegocioSuperAdmin[]>([]);
+  const [negocios, setNegocios] = useState<NegocioSuperAdmin[]>([]);
+  const { session } = useUser();
+
+  const { data } = useQuery({
+    queryKey: ["negociosSuperAdmin"],
+    queryFn: () => getSuperAdminNegocios(session?.accessToken || ""),
+  });
+
+  useEffect(() => {
+    if (data) {
+      setNegocios(data);
+    }
+  }, [data]);
+
+  const filteredData = useMemo(() => {
+    console.log("negocios", negocios);
+
+    return negocios.filter((negocio) =>
+      negocio.nombreNegocio.toLowerCase().includes(searchValue.toLowerCase())
+    );
+  }, [negocios, searchValue]);
+
+  const negocioSuperAdminColumns: Column<NegocioSuperAdmin>[] = [
+    {
+      key: "nombreNegocio",
+      label: "Nombre del Negocio",
+      render: (negocio) => (
+        <div className="font-medium">{negocio.nombreNegocio}</div>
+      ),
+      sortable: true,
+    },
+    {
+      key: "propietario",
+      label: "Propietario",
+      render: (negocio) => (
+        <div>
+          <div className="font-medium">{negocio.propietario?.nombre}</div>
+          <div className="text-sm text-muted-foreground">
+            {negocio.propietario?.correo}
+          </div>
+        </div>
+      ),
+      sortable: true,
+    },
+    {
+      key: "direccion",
+      label: "Dirección",
+      render: (negocio) => (
+        <div className="text-sm text-muted-foreground">{negocio.direccion}</div>
+      ),
+      sortable: true,
+    },
+    {
+      key: "telefono",
+      label: "Teléfono",
+      render: (negocio) => <span>{negocio.telefono}</span>,
+      sortable: true,
+    },
+    {
+      key: "correo",
+      label: "Correo",
+      render: (negocio) => (
+        <div className="text-sm text-muted-foreground">{negocio.correo}</div>
+      ),
+      sortable: true,
+    },
+    {
+      key: "tipoNegocio",
+      label: "Tipo de Negocio",
+      render: (negocio) => (
+        <div>
+          <div className="font-medium">{negocio.tipoNegocio?.nombre}</div>
+        </div>
+      ),
+      sortable: true,
+    },
+    {
+      key: "fechaCreacion",
+      label: "Fecha de Creación",
+      render: (negocio) =>
+        negocio.fechaCreacion ? (
+          <span>
+            {new Date(negocio.fechaCreacion).toLocaleDateString("es-CO", {
+              year: "numeric",
+              month: "long",
+              day: "numeric",
+            })}
+          </span>
+        ) : (
+          <span className="italic text-muted-foreground">Sin fecha</span>
+        ),
+      sortable: true,
+    },
+  ];
+
   return (
     <>
       <motion.div
@@ -32,7 +135,7 @@ export default function NegociosPage() {
         <Separator className="my-4" />
 
         {/* Stats Cards */}
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-3">
           {negocioStats.map((stat) => (
             <Card
               key={stat.title}
@@ -54,11 +157,28 @@ export default function NegociosPage() {
             </Card>
           ))}
         </div>
-        <CardsNegociosActions
-          title="Negocios"
-          description="Gestiona los negocios de tu plataforma."
-          actions={negociosActions}
+
+        <DataSearchFilter
+          showCreateModal={false}
+          searchValue={searchValue}
+          onSearchChange={setSearchValue}
+          activeFilters={{}}
+          onFilterChange={() => {}}
+          onClearFilters={() => {}}
+          showAdvancedFilters={false}
+          onToggleAdvancedFilters={() => {}}
+          selectedItems={selectedItems}
         />
+        <div className="mt-8">
+          <DataTable
+            selectedItems={selectedItems}
+            data={filteredData}
+            columns={negocioSuperAdminColumns}
+            emptyDescription="No se encontraron negocios para mostrar"
+            emptyMessage="No hay negocios disponibles"
+            onSelectionChange={setSelectedItems}
+          />
+        </div>
       </motion.div>
     </>
   );
