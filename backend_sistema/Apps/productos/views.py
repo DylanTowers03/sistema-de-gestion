@@ -14,7 +14,7 @@ from Apps.autenticacion.models import Rol
 from django.utils.crypto import get_random_string
 from Apps.productos.models import Factura, DetalleFactura
 from Apps.clientes.models import Cliente
-
+from Apps.negocios.models import TblNegocio
 class CrearFacturaSimulada(APIView):
     permission_classes = [IsInRole]
     required_roles = ["Admin", "Moderador", "Usuario"]
@@ -98,7 +98,7 @@ class ProductoViewSet(APIView):
 
     def post(self, request):
         data = request.data.copy()  
-        print(data)
+        user = request.user
         try:
             if data.get('categoria'):
                 categoria = get_object_or_404(CategoriaProducto, nombreCategoria=data['categoria'])
@@ -113,7 +113,7 @@ class ProductoViewSet(APIView):
 
         serializer = ProductoSerializer(data=data)
         if serializer.is_valid():
-            producto = serializer.save()
+            serializer.save()
             return Response(serializer.data, status=201)
 
         return Response(serializer.errors, status=400)

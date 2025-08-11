@@ -18,6 +18,7 @@ import { useUser } from "./UserContext";
 import { redirect } from "next/navigation";
 export function DashboardHeader() {
   const { session } = useUser();
+  const roles = session?.user?.roles ?? [];
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -85,6 +86,16 @@ export function DashboardHeader() {
                 <Building2 className="mr-2 h-4 w-4" />
                 <span>Facturar</span>
               </DropdownMenuItem>
+
+              {roles.includes("Admin") && (
+                <DropdownMenuItem
+                  onClick={() => redirect("/dashboard/minegocio/edit/")}
+                >
+                  <Building2 className="mr-2 h-4 w-4" />
+                  <span>Mi Negocio</span>
+                </DropdownMenuItem>
+              )}
+
               <DropdownMenuSeparator />
               <DropdownMenuItem
                 onClick={() => signOut({ callbackUrl: "/auth/login" })}

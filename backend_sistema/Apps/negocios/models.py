@@ -1,5 +1,5 @@
 from django.db import models
-
+from Apps.autenticacion.models import Usuario
 from Apps.autenticacion.models import Usuario
 
 class TipoNegocio(models.Model):
@@ -14,18 +14,13 @@ class TipoNegocio(models.Model):
         verbose_name_plural = "tipo negocios"
 
 class TblNegocio(models.Model):
+    propietario = models.OneToOneField(Usuario, on_delete=models.SET_NULL, related_name='negocio_propietario', null=True) 
     nombreNegocio = models.CharField(max_length=100)
     direccion = models.TextField()
     telefono = models.CharField(max_length=20)
     correo = models.CharField(max_length=255)
-    fechaCreacion = models.DateField()
+    fechaCreacion = models.DateField(auto_now_add=True)
     tipoNegocio = models.ForeignKey(TipoNegocio, on_delete=models.SET_NULL, null=True)
 
 
-class UsuarioNegocio(models.Model):
-    usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE)
-    negocio = models.ForeignKey(TblNegocio, on_delete=models.CASCADE)
-
-    class Meta:
-        unique_together = ('usuario', 'negocio')
-        db_table = 'tbl_negocio_has_Usuario'
+        

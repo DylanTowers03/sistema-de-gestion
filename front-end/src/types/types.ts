@@ -18,6 +18,7 @@ type User = {
   id: number;
   nombre: string;
   correo: string;
+  negocio: number;
   roles: string[];
   exp: number;
 };
@@ -217,6 +218,7 @@ interface TipoNegocio {
 type Negocio = {
   id: string;
   nombreNegocio: string;
+  propietario?: number;
   direccion: string;
   telefono: string;
   correo: string;
@@ -335,6 +337,32 @@ export const facturaFormSchema = z.object({
 
 export type FacturaFormData = z.infer<typeof facturaFormSchema>;
 
+type Empleado = {
+  correo: string;
+  nombre: string;
+  password: string;
+  negocio: number;
+  salario: number;
+};
+
+export const EmpleadoFormSchema = z.object({
+  correo: z
+    .string()
+    .email("Correo electrónico inválido")
+    .max(100, "Máximo 100 caracteres"),
+  nombre: z
+    .string()
+    .min(1, "El nombre es requerido")
+    .max(100, "Máximo 100 caracteres"),
+  password: z
+    .string()
+    .min(1, "La contraseña es requerida")
+    .max(100, "Máximo 100 caracteres"),
+  salario: z.number().min(0, "El salario debe ser mayor o igual a 0"),
+});
+
+type EmpleadoFormData = z.infer<typeof EmpleadoFormSchema>;
+
 export type {
   DataItem,
   filterOptions,
@@ -362,4 +390,6 @@ export type {
   UsuarioNegocioFormData,
   NegociosFormData,
   TipoNegocioFormData,
+  Empleado,
+  EmpleadoFormData,
 };

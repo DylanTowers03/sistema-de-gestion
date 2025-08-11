@@ -30,6 +30,8 @@ interface DataSearchFilterProps {
   showAdvancedFilters?: boolean;
   onToggleAdvancedFilters?: () => void;
   selectedItems?: any[];
+  showCreateModal?: boolean;
+  onShowCreateModal?: (value: boolean) => void;
 }
 
 export function DataSearchFilter({
@@ -42,6 +44,8 @@ export function DataSearchFilter({
   showAdvancedFilters = false,
   onToggleAdvancedFilters,
   selectedItems,
+  showCreateModal,
+  onShowCreateModal,
 }: DataSearchFilterProps) {
   const activeFilterCount = Object.values(activeFilters || {}).filter(
     Boolean
@@ -87,6 +91,18 @@ export function DataSearchFilter({
         {/* Excel Exporter */}
         <ExcelExporter data={selectedItems || []} />
         {/* Clear Filters */}
+
+        {showCreateModal && (
+          <Button
+            variant="outline"
+            size="sm"
+            className="cursor-pointer"
+            onClick={() => onShowCreateModal?.(true)}
+          >
+            Crear
+          </Button>
+        )}
+
         {activeFilterCount > 0 && (
           <Button variant="ghost" size="sm" onClick={onClearFilters}>
             <X className="w-4 h-4 mr-2" />

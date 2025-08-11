@@ -1,7 +1,7 @@
 from django.db import models
 from Apps.ventas.models import Venta
 from Apps.clientes.models import Cliente
-
+from Apps.negocios.models import TblNegocio
 class CategoriaProducto(models.Model):
     nombreCategoria = models.CharField(max_length=100)
 
@@ -15,6 +15,7 @@ class TipoProducto(models.Model):
         return self.nombreTipoProducto
 
 class Producto(models.Model):
+    negocio = models.ForeignKey(TblNegocio, on_delete=models.SET_NULL, null=True, related_name='productos')
     nombreProducto = models.CharField(max_length=100)
     descripcion = models.TextField()
     stockActual = models.IntegerField()

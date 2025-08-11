@@ -23,16 +23,14 @@ export const authOptions: NextAuthOptions = {
           );
 
           const user = res.data;
-          console.log(user);
 
           if (user) {
             const jwt = jwtDecode<User>(user.access);
-            console.log(jwt);
-
             return {
               id: jwt.id,
               correo: jwt.correo,
               nombre: jwt.nombre,
+              negocio: jwt.negocio,
               roles: jwt.roles,
               accessToken: user.access,
               refreshToken: user.refresh,
@@ -58,6 +56,7 @@ export const authOptions: NextAuthOptions = {
         token.correo = user.correo;
         token.nombre = user.nombre;
         token.roles = user.roles;
+        token.negocio = user.negocio;
         token.accessToken = user.accessToken;
         token.refreshToken = user.refreshToken;
         token.accessTokenExpires = user.accessTokenExpires;
@@ -75,6 +74,7 @@ export const authOptions: NextAuthOptions = {
           correo: token.correo as string,
           nombre: token.nombre as string,
           roles: token.roles as string[],
+          negocio: token.negocio as number,
         };
       }
 

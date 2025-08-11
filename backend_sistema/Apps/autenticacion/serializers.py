@@ -1,9 +1,10 @@
 import bcrypt
 from rest_framework import serializers
 from .models import Usuario, Rol, Recurso, UsuarioHasRol, RecursoHasRol
+from Apps.negocios.models import TblNegocio
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
-
-
+from Apps.negocios.models import TblNegocio
+from Apps.empleados.models import Empleado
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
    @classmethod
    def get_token(cls, user):
@@ -14,6 +15,37 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
         token["id"] = user.id  # Assuming 'id' is the primary key of the user
         token['correo'] = user.correo
         token['roles'] = [rol.nombreRol for rol in user.roles.all()]
+
+        # Negocio al que pertenece el usuario
+        
+        #verificar si es un propietario o un empleado los propietarios tienen
+        #rol de Admin y los empleados tienen rol de Usuario
+        negocio = None
+
+        isPropietario = user.roles.filter(nombreRol='Admin').exists()
+
+        isSuperAdmin = user.roles.filter(nombreRol='SuperAdmin').exists()
+        print("sadSDSDFNKSFNKSJDFNSDN")
+
+
+        if isSuperAdmin:
+            negocio = 0
+            token['negocio'] = negocio
+            print(token['negocio'])
+            return token        
+        else:
+
+            if isPropietario:
+                negocio = TblNegocio.objects.filter(propietario=user).first()
+            else:
+                e = Empleado.objects.filter(user=user).first()
+                negocio = TblNegocio.objects.filter(pk=e.negocio_id).first()
+
+
+        if negocio:
+            token['negocio'] = negocio.id    
+
+
         return token
 
 
@@ -35,8 +67,15 @@ class RegisterSerializer(serializers.ModelSerializer):
         )
 
         #assing default role for this user
-        default_role = Rol.objects.get_or_create(nombreRol='Usuario')
+        default_role = Rol.objects.get_or_create(nombreRol='Admin')
         UsuarioHasRol.objects.create(usuario=user, rol=default_role[0])
+
+        TblNegocio.objects.create(propietario=user,
+                                  nombreNegocio="None",
+                                  direccion="None",
+                                  telefono="None",
+                                  correo="None",
+                                  )        
 
         return user
 

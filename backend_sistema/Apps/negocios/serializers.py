@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import TipoNegocio, TblNegocio, UsuarioNegocio
+from .models import TipoNegocio, TblNegocio
 from Apps.autenticacion.models import Usuario
 
 class TipoNegocioSerializer(serializers.ModelSerializer):
@@ -15,7 +15,3 @@ class TblNegocioSerializer(serializers.ModelSerializer):
         model = TblNegocio
         fields = '__all__'
 
-class UsuarioNegocioSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = UsuarioNegocio
-        fields = '__all__'

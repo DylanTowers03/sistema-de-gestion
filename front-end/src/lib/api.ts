@@ -9,6 +9,7 @@ import {
   Negocio,
   TipoNegocio,
   FacturaFormData,
+  Empleado,
 } from "@/types/types";
 const BACKEND_URL = process.env.BACKEND_URL || "http://localhost:8000/";
 
@@ -388,8 +389,7 @@ export async function assingProveedorToProducto(
   return response.data;
 }
 
-/*
-export async function getNegocios(token: string): Promise<Negocio[]> {
+export async function getMiNegocio(token: string): Promise<Negocio> {
   const response = await axios.get(`${BACKEND_URL}negocios/api/negocios/`, {
     headers: {
       "Content-Type": "application/json",
@@ -399,7 +399,6 @@ export async function getNegocios(token: string): Promise<Negocio[]> {
 
   return response.data;
 }
-*/
 
 export async function createNegocio(
   data: Omit<Negocio, "id">,
@@ -511,6 +510,43 @@ export async function getUsuarioNegocio(
 ): Promise<Negocio[]> {
   const response = await axios.get(
     `${BACKEND_URL}negocios/api/usuario-negocio/${idUser}`,
+    {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+
+  return response.data;
+}
+
+export async function getEmpleados(token: string): Promise<Empleado[]> {
+  const response = await axios.get(`${BACKEND_URL}empleados/api/empleados/`, {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  return response.data.empleados;
+}
+
+export async function createEmpleados(
+  data: Empleado,
+  token: string
+): Promise<Empleado> {
+  const response = await axios.post(
+    `${BACKEND_URL}empleados/api/empleados/`,
+    {
+      user: {
+        correo: data.correo,
+        password: data.password,
+        nombre: data.nombre,
+      },
+      salario: data.salario,
+      negocio: data.negocio,
+    },
     {
       headers: {
         "Content-Type": "application/json",
