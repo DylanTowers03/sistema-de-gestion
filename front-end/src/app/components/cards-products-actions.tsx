@@ -76,6 +76,7 @@ export default function CardsActions({
           precioVenta: data.salePrice,
           categoria: data.category,
           tipo: data.type,
+          negocio: session?.user.negocio || 0,
         },
         session?.accessToken || ""
       ),
@@ -100,7 +101,13 @@ export default function CardsActions({
 
   const { mutate: updateProductMutation } = useMutation({
     mutationFn: (data: Partial<ProductFormDataUpdate>) =>
-      updateProduct(data, session?.accessToken || ""),
+      updateProduct(
+        {
+          ...data,
+        },
+        session?.user.negocio || 0,
+        session?.accessToken || ""
+      ),
     onSuccess: () => {
       setIsFormModalOpen(false);
       toast.success("Product updated successfully");

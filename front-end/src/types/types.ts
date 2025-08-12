@@ -300,6 +300,7 @@ type Client = {
 type Product = {
   id: string;
   nombreProducto: string;
+  negocio: number;
   descripcion: string;
   stockActual: number;
   stockMin: number;

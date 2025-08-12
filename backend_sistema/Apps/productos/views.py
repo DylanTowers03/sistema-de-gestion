@@ -15,6 +15,7 @@ from django.utils.crypto import get_random_string
 from Apps.productos.models import Factura, DetalleFactura
 from Apps.clientes.models import Cliente
 from Apps.negocios.models import TblNegocio
+from Apps.empleados.models import Empleado
 class CrearFacturaSimulada(APIView):
     permission_classes = [IsInRole]
     required_roles = ["Admin", "Moderador", "Usuario"]
@@ -98,7 +99,10 @@ class ProductoViewSet(APIView):
 
     def post(self, request):
         data = request.data.copy()  
-        user = request.user
+
+        if data["negocio"] == None:
+            raise Exception("El negocio es requerido")
+
         try:
             if data.get('categoria'):
                 categoria = get_object_or_404(CategoriaProducto, nombreCategoria=data['categoria'])
@@ -119,15 +123,32 @@ class ProductoViewSet(APIView):
         return Response(serializer.errors, status=400)
     
     def get(self, request, pk=None):
+        user = request.user
+
+        negocio_id = None
+
+
+        if user.roles.filter(nombreRol='Admin').exists():
+            negocio = TblNegocio.objects.get(propietario=user.id)
+            negocio_id = negocio.id
+
+
+        #if user is Usuario search negocio in employee
+        
+        if user.roles.filter(nombreRol='Usuario').exists():
+            empleado = Empleado.objects.get(empleado=user.id)
+            negocio_id = empleado.negocio.id
+
+
         if pk is not None:
             try:
-                producto = Producto.objects.get(pk=pk)
+                producto = Producto.objects.get(pk=pk, negocio=negocio_id)
             except Producto.DoesNotExist:
                 return Response({'error': 'Producto no encontrado'}, status=404)
 
             return Response(serializer.data)
         
-        productos = Producto.objects.all()
+        productos = Producto.objects.filter(negocio=negocio_id)
         serializer = ProductoSerializer(productos, many=True)
         return Response(serializer.data)
 
@@ -137,6 +158,8 @@ class ProductoViewSet(APIView):
         user_rol = request.user.roles.all().values_list('nombreRol', flat=True)
         data = request.data.copy()  
 
+        if data["negocio"] == None:
+            raise Exception("El negocio es requerido")
 
         if 'Admin' not in user_rol and 'Moderador' not in user_rol and 'Usuario' not in user_rol:
             return Response({'error': 'No tienes permiso para editar productos'}, status=403)
@@ -155,7 +178,7 @@ class ProductoViewSet(APIView):
             return Response({"error": str(e)}, status=400)
 
         try:
-            producto = Producto.objects.get(pk=pk)
+            producto = Producto.objects.get(pk=pk, negocio=data['negocio'])
         except Producto.DoesNotExist:
             return Response({'error': 'Producto no encontrado'}, status=404)
 
@@ -173,8 +196,26 @@ class ProductoViewSet(APIView):
         if 'Admin' not in user_rol:
             return Response({'error': 'No tienes permiso para eliminar productos'}, status=403)
 
+        user = request.user
+
+        negocio_id = None
+
+
+        if user.roles.filter(nombreRol='Admin').exists():
+            negocio = TblNegocio.objects.get(propietario=user.id)
+            negocio_id = negocio.id
+
+
+        #if user is Usuario search negocio in employee
+        
+        if user.roles.filter(nombreRol='Usuario').exists():
+            empleado = Empleado.objects.get(empleado=user.id)
+            negocio_id = empleado.negocio.id
+
+
+
         try:
-            producto = Producto.objects.get(pk=pk)
+            producto = Producto.objects.get(pk=pk, negocio=negocio_id)
         except Producto.DoesNotExist:
             return Response({'error': 'Producto no encontrado'}, status=404)
 

@@ -62,6 +62,7 @@ export async function createProduct(
 
 export async function updateProduct(
   data: Partial<ProductFormDataUpdate>,
+  negocioId: number,
   token: string
 ): Promise<Product> {
   const response = await axios.patch(
@@ -77,6 +78,7 @@ export async function updateProduct(
       precioVenta: data.salePrice,
       category: data.category,
       type: data.type,
+      negocio: negocioId,
     },
     {
       headers: {
