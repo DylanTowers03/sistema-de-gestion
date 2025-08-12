@@ -16,6 +16,7 @@ from Apps.productos.models import Factura, DetalleFactura
 from Apps.clientes.models import Cliente
 from Apps.negocios.models import TblNegocio
 from Apps.empleados.models import Empleado
+from Apps.proveedores.views import getNegocioId
 class CrearFacturaSimulada(APIView):
     permission_classes = [IsInRole]
     required_roles = ["Admin", "Moderador", "Usuario"]
@@ -125,20 +126,7 @@ class ProductoViewSet(APIView):
     def get(self, request, pk=None):
         user = request.user
 
-        negocio_id = None
-
-
-        if user.roles.filter(nombreRol='Admin').exists():
-            negocio = TblNegocio.objects.get(propietario=user.id)
-            negocio_id = negocio.id
-
-
-        #if user is Usuario search negocio in employee
-        
-        if user.roles.filter(nombreRol='Usuario').exists():
-            empleado = Empleado.objects.get(empleado=user.id)
-            negocio_id = empleado.negocio.id
-
+        negocio_id = getNegocioId(user)
 
         if pk is not None:
             try:
@@ -198,20 +186,7 @@ class ProductoViewSet(APIView):
 
         user = request.user
 
-        negocio_id = None
-
-
-        if user.roles.filter(nombreRol='Admin').exists():
-            negocio = TblNegocio.objects.get(propietario=user.id)
-            negocio_id = negocio.id
-
-
-        #if user is Usuario search negocio in employee
-        
-        if user.roles.filter(nombreRol='Usuario').exists():
-            empleado = Empleado.objects.get(empleado=user.id)
-            negocio_id = empleado.negocio.id
-
+        negocio_id = getNegocioId(user) 
 
 
         try:

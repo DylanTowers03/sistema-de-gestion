@@ -5,25 +5,14 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from Apps.negocios.models import TblNegocio
 from Apps.empleados.models import Empleado
+from Apps.proveedores.views import getNegocioId
 class ClienteViewSet(APIView):
     permission_classes = [IsInRole]
     required_roles = ["Admin", "Moderador", "Usuario"]
 
-    
-    def getNegocioId(self, user):
-        #if is propietario
-        if user.roles.filter(nombreRol='Admin').exists():
-            negocio = TblNegocio.objects.get(propietario=user.id)
-            return negocio.id
-
-        if user.roles.filter(nombreRol='Usuario').exists():
-            empleado = Empleado.objects.get(empleado=user.id)            
-            return empleado.negocio.id
-
-        return None    
-    
+   
     def post(self, request):
-        negocio_id = self.getNegocioId(request.user)
+        negocio_id = getNegocioId(request.user)
         request.data['negocio'] = negocio_id
 
         serializer = ClienteSerializer(data=request.data)
@@ -33,7 +22,7 @@ class ClienteViewSet(APIView):
         return Response(serializer.errors, status=400)
 
     def get(self, request, pk=None):
-        negocio_id = self.getNegocioId(request.user)
+        negocio_id = getNegocioId(request.user)
 
         if pk is not None:
             try:
@@ -48,7 +37,7 @@ class ClienteViewSet(APIView):
         return Response(serializer.data)
 
     def patch(self, request, pk=None):
-        negocio_id = self.getNegocioId(request.user)
+        negocio_id = getNegocioId(request.user)
 
 
         try:
@@ -63,7 +52,7 @@ class ClienteViewSet(APIView):
         return Response(serializer.errors, status=400)
 
     def delete(self, request, pk=None):
-        negocio_id = self.getNegocioId(request.user)
+        negocio_id = getNegocioId(request.user)
 
 
         user_rol = request.user.roles.all().values_list('nombreRol', flat=True)

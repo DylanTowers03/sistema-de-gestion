@@ -17,7 +17,7 @@ def getNegocioId(user):
             return negocio.id
 
         if user.roles.filter(nombreRol='Usuario').exists():
-            empleado = Empleado.objects.get(empleado=user.id)            
+            empleado = Empleado.objects.get(user=user.id)            
             return empleado.negocio.id
 
         return None
